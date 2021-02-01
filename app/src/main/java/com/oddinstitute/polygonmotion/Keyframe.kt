@@ -4,6 +4,8 @@ import android.graphics.Color
 import android.graphics.PointF
 import android.util.Log
 
+
+// T can be float, Color, or array
 class Keyframe<T> (var frame: Int, var value: T)
 {
     override fun toString(): String
@@ -17,7 +19,7 @@ class Keyframe<T> (var frame: Int, var value: T)
 
             return "frame: $frame -> $value"
         }
-        else if (value is Array<*>)
+        else if (value is ArrayList<*>)
         {
             return "frame: $frame -> $value"
         }

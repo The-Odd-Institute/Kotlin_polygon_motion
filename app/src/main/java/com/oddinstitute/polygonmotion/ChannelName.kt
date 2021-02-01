@@ -1,28 +1,26 @@
 package com.oddinstitute.polygonmotion
 
 
-
-
-    enum class ChannelName(val type: String)
+enum class ChannelName(val type: String)
 {
     // Group Level Only
-    TranslateX ("Move Horizontally"),
-    TranslateY ("Move Vertically"),
+    TranslateX("Move Horizontally"),
+    TranslateY("Move Vertically"),
 
-    Rotate ("Rotate"),
+    Rotate("Rotate"),
 
-    ScaleX ("Resize Horizontally"),
-    ScaleY ("Resize Vertically"),
+    ScaleX("Resize Horizontally"),
+    ScaleY("Resize Vertically"),
 
-    Alpha ("Visibility"),
+    Alpha("Visibility"),
 
 
     // Poly Level Only
-    Data ("Shape"),
-    FillColor ("Color"),
+    Shape("Shape"),
+    FillColor("Color"),
 
-    StrokeColor ("Border Color"),
+    StrokeColor("Border Color"),
 
-    StrokeWidth ("Border Thickness")
+    StrokeWidth("Border Thickness")
 
 }

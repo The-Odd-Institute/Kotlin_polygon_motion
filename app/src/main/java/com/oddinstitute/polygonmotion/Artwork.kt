@@ -4,7 +4,8 @@ class Artwork
 {
     var polygons : ArrayList<Polygon> = arrayListOf()
 
-    var motions: ArrayList<Motion> = arrayListOf()
+//    var motions: ArrayList<Motion> = arrayListOf()
+    var motion: Motion? = null
 
     fun clearPaths ()
     {

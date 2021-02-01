@@ -1,19 +1,20 @@
 package com.oddinstitute.polygonmotion
 
 import android.graphics.Color
+import android.graphics.Point
+import android.graphics.PointF
 import android.os.Bundle
 import android.util.Log
 import android.widget.SeekBar
 import androidx.appcompat.app.AppCompatActivity
 import kotlinx.android.synthetic.main.activity_main.*
-import kotlin.math.roundToInt
 
 class MainActivity : AppCompatActivity()
 {
     lateinit var squarePolygon: Polygon
     lateinit var trianglePolygon: Polygon
 
-    val duration: Float = 5.5f
+    val duration: Float = 2f
 
     var currentFrame = 55
     lateinit var drawView: DrawView
@@ -27,113 +28,67 @@ class MainActivity : AppCompatActivity()
         setContentView(R.layout.activity_main)
 
 
-
-
-
-
-
         currentTime = currentFrame.toSeconds()
         setupSeekbar()
 
         timeSeekbar.setOnSeekBarChangeListener(seekBarListener())
 
-
-
-
-
-        squarePolygon = Polygon()
+       squarePolygon = Polygon()
+        squarePolygon.polyData = AppData.square()
+        artwork.polygons.add(squarePolygon)
 
         // these are temp
-        temp_MakePolygonFillColorMotion()
-        temp_MakePolygonStrokeColorMotion ()
-
-        for (motion in squarePolygon.motions)
-        {
-            motion.motionData.makePlaybackFrames(duration.toFrames())
-        }
+        temp_makeSquareMotionsFirstSeries ()
+//
+        temp_makeSquareMotionsSecondsSeries ()
 
 
 
-
-
-        squarePolygon.data = AppData.square()
-
+// this Triangle
         trianglePolygon = Polygon()
-
-        trianglePolygon.data = AppData.triangle()
-
-        artwork.polygons.add(squarePolygon)
+        trianglePolygon.polyData = AppData.triangle()
         artwork.polygons.add(trianglePolygon)
+//
+////         this is temp
+        temp_MakeTriangleShapeMotion ()
+
 
         drawView = DrawView(this,
                             arrayListOf(artwork))
 
         boom.addView(drawView)
-    }
-
-    fun temp_MakePolygonFillColorMotion()
-    {
-        var squareColorMotionData = MotionData()
-
-        val red = Color.valueOf(1f, 0f, 0f, 1f)
-        val green = Color.valueOf(0f, 1f, 0f, 1f)
-
-        val keyframeOneFillColor : Keyframe<Color> = Keyframe(0, red)
-        val keyframeTwoFillColor : Keyframe<Color> = Keyframe(100, green)
 
 
-        squareColorMotionData.fillColor.addKeyframe(keyframeOneFillColor)
-        squareColorMotionData.fillColor.addKeyframe(keyframeTwoFillColor)
-
-        val squareColorMotion = Motion(java.util.UUID.randomUUID()
-                                               .toString(),
-                                       squareColorMotionData)
-
-        squarePolygon.motions.add(squareColorMotion)
-    }
-
-    fun temp_MakePolygonStrokeColorMotion()
-    {
-        var squareStrokeColorMotionData = MotionData()
-
-        val red = Color.valueOf(1f, 1f, 0f, 1f)
-        val green = Color.valueOf(1f, 1f, 0f, 1f)
-
-        val keyframeOneFillColor : Keyframe<Color> = Keyframe(20, red)
-        val keyframeTwoFillColor : Keyframe<Color> = Keyframe(80, green)
+        // we do this to make sure everything goes to the right place
+        // depending on the current place on timeline
+        playbackAll()
 
 
-        squareStrokeColorMotionData.strokeColor.addKeyframe(keyframeOneFillColor)
-        squareStrokeColorMotionData.strokeColor.addKeyframe(keyframeTwoFillColor)
 
-        val squareStrokeColorMotion = Motion(java.util.UUID.randomUUID()
-                                               .toString(),
-                                       squareStrokeColorMotionData)
+        offsetButton.setOnClickListener {
+            // let's find the square color motion
 
-        squarePolygon.motions.add(squareStrokeColorMotion)
-
-    }
-
-
-    fun temp_MakePolygonStrokeWidthMotion()
-    {
-        var squareStrokeWidthMotionData = MotionData()
-
-        val red = Color.valueOf(1f, 1f, 0f, 1f)
-        val green = Color.valueOf(1f, 1f, 0f, 1f)
-
-        val keyframeOneFillColor : Keyframe<Float> = Keyframe(20, 0f)
-        val keyframeTwoFillColor : Keyframe<Float> = Keyframe(80, 40f)
+            for (motion in squarePolygon.motions)
+            {
+                if (motion.motionData.name == "Square Color Motion")
+                {
+                    val channelOffset : Int = channelOffsetEditText.text.toString().toInt()
+                    val scaleRatio : Float = channelScaleEditText.text.toString().toFloat()
 
 
-        squareStrokeWidthMotionData.strokeWidth.addKeyframe(keyframeOneFillColor)
-        squareStrokeWidthMotionData.strokeWidth.addKeyframe(keyframeTwoFillColor)
 
-        val squareStrokeWidthMotion = Motion(java.util.UUID.randomUUID()
-                                               .toString(),
-                                       squareStrokeWidthMotionData)
+                    val motionOffset : Int = motionOffsetEditText.text.toString().toInt()
+                    val motionScale : Float = motionScaleEditText.text.toString().toFloat()
 
-        squarePolygon.motions.add(squareStrokeWidthMotion)
+//                    motion.motionData.fillColor.scaleFromRight(scaleRatio, duration.toFrames(), motionOffset)
+                    motion.motionData.fillColor.scaleFromLeft(scaleRatio, duration.toFrames(), motionOffset)
+//                    motion.motionData.fillColor.scaleFromBothLeftAndRight(scaleRatio, duration.toFrames(), motionOffset)
+
+                    squarePolygon.makePolygonPlayableMotion(duration.toFrames())
+
+                }
+            }
+        }
 
     }
 
@@ -141,6 +96,7 @@ class MainActivity : AppCompatActivity()
     fun playbackAll()
     {
         playbackView(drawView)
+        drawView.invalidate()
     }
 
     fun playbackView(view: DrawView)
@@ -163,90 +119,58 @@ class MainActivity : AppCompatActivity()
         var tyOfAllMotions = 0f
         var numberOfMotionsWithTy = 0
 
-        for (motion in artwork.motions)
-        {
-            // TX - because single keyframes are not allowed
-            if (motion.motionData.translateX.playbackFrames.count() > 0)
-            {
-                numberOfMotionsWithTx += 1
-                txOfAllMotions += motion.motionData.translateX.playbackFrames[currentFrame]
-            }
-
-            // TX - because single keyframes are not allowed
-            if (motion.motionData.translateY.playbackFrames.count() > 0)
-            {
-                numberOfMotionsWithTy += 1
-                tyOfAllMotions += motion.motionData.translateY.playbackFrames[currentFrame]
-            }
-        }
-
-
-        // play the polygons
-        // artwork has polygons
-        // polygon has data
-        // data has an array of points
-        // points should be moves
-        // colors should be set
-
-        var fillColorOfAllMotionsR : Float = 0f
-        var fillColorOfAllMotionsG : Float = 0f
-        var fillColorOfAllMotionsB : Float = 0f
-        var fillColorOfAllMotionsA : Float = 0f
-        var numberOfMotionsWithFillColor = 0
-
-        var fillColorOfAllMotions : Color = Color()
+//        for (motion in artwork.motions)
+//        {
+//            // TX - because single keyframes are not allowed
+//            if (motion.motionData.translateX.playbackFrames.count() > 0)
+//            {
+//                numberOfMotionsWithTx += 1
+//                txOfAllMotions += motion.motionData.translateX.playbackFrames[currentFrame]
+//            }
+//
+//            // TX - because single keyframes are not allowed
+//            if (motion.motionData.translateY.playbackFrames.count() > 0)
+//            {
+//                numberOfMotionsWithTy += 1
+//                tyOfAllMotions += motion.motionData.translateY.playbackFrames[currentFrame]
+//            }
+//        }
 
         for (polygon in artwork.polygons)
         {
-            if (polygon.motions.count() > 0) // there is at least one motion for this polygon
-            {
-                for (motion in polygon.motions)
-                {
-                    // COLORS
-                    if (motion.motionData.fillColor.playbackFrames.count() > 0) // there are colors
-                    {
-                        numberOfMotionsWithFillColor += 1
-
-                        val colorThisFrame = motion.motionData.fillColor.playbackFrames[currentFrame]
-
-                        fillColorOfAllMotions += colorThisFrame
-//                        val r = colorThisFrame.red()
-//                        val g = colorThisFrame.green()
-//                        val b = colorThisFrame.blue()
-//                        val a = colorThisFrame.alpha()
-
-
-//                        fillColorOfAllMotionsR += r
-//                        fillColorOfAllMotionsG += g
-//                        fillColorOfAllMotionsB += b
-//                        fillColorOfAllMotionsA += a
-
-                    }
-                }
-
-                if (numberOfMotionsWithFillColor != 0)
-                {
-                    val fillColor = fillColorOfAllMotions / numberOfMotionsWithFillColor
-
-                    polygon.data.fillColor = Color.argb(fillColor.alpha(),
-                                                        fillColor.red(),
-                                                        fillColor.blue(),
-                                                        fillColor.alpha())
-
-//                    var r = (fillColorOfAllMotionsR / numberOfMotionsWithFillColor * 255).roundToInt()
-//                    var g = (fillColorOfAllMotionsG / numberOfMotionsWithFillColor * 255).roundToInt()
-//                    var b = (fillColorOfAllMotionsB / numberOfMotionsWithFillColor * 255).roundToInt()
-//                    var a = (fillColorOfAllMotionsA / numberOfMotionsWithFillColor * 255).roundToInt()
-//                       polygon.data.fillColor = Color.argb(r, g, b, a)
-
-                    drawView.invalidate()
-                }
-
-            }
+            playbackPolygon(polygon)
         }
-
-
     }
+
+    fun playbackPolygon (polygon: Polygon)
+    {
+        polygon.playableMotion?.let {
+
+//            Log.d("Tag", "${it.motionData.fillColor.playbackFrames[currentFrame]}")
+
+            if (it.motionData.fillColor.animated)
+            polygon.polyData.fillColor =
+                    it.motionData.fillColor.playbackFrames[currentFrame].toArgb()
+
+            if (it.motionData.strokeColor.animated)
+            polygon.polyData.strokeColor =
+                    it.motionData.strokeColor.playbackFrames[currentFrame].toArgb()
+//
+            if (it.motionData.strokeWidth.animated)
+            polygon.polyData.strokeWidth =
+                    it.motionData.strokeWidth.playbackFrames[currentFrame]
+
+
+
+            if (it.motionData.pathData.animated)
+            polygon.polyData.pathData =
+                    it.motionData.pathData.playbackFrames[currentFrame]
+        }
+    }
+
+
+
+
 
     private fun setupSeekbar()
     {
@@ -267,21 +191,16 @@ class MainActivity : AppCompatActivity()
                                            progress: Int,
                                            b: Boolean)
             {
-
-//                for (artwork in drawView.artworks)
-//                {
-//                    for (polygon in artwork.polygons)
-//                    {
-//                        polygon.data.fillColor = Color.DKGRAY
-//                    }
-//                }
-//
-//                drawView.invalidate()
-
-
-
                 currentFrame = progress
+
+//                currentFrame = progress
                 playbackAll()
+
+
+                for (point in trianglePolygon.polyData.pathData)
+                {
+                    Log.d("Tag", "Point is ${point}")
+                }
             }
 
             override fun onStartTrackingTouch(seekBar: SeekBar)

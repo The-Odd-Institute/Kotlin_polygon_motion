@@ -11,9 +11,9 @@ class AppData
     companion object
     {
 
-        fun square() : PolygonData
+        fun square() : PolyData
         {
-            var polygon: PolygonData = PolygonData()
+            var poly: PolyData = PolyData()
             val point1 =
                     PointF(100f,
                            100f)
@@ -27,24 +27,24 @@ class AppData
                     PointF(100f,
                            300f)// M42.3803,56.9069
 
-            polygon.closed = true
-            polygon.pathData.add(point1)
-            polygon.pathData.add(point2)
-            polygon.pathData.add(point3)
-            polygon.pathData.add(point5)
+            poly.closed = true
+            poly.pathData.add(point1)
+            poly.pathData.add(point2)
+            poly.pathData.add(point3)
+            poly.pathData.add(point5)
 
-            polygon.fillColor = Color.BLUE
-            polygon.strokeColor = Color.parseColor("#979797")
-            polygon.strokeLineCap = Paint.Cap.ROUND
-            polygon.strokeWidth = 2.0f
-            polygon.fillType = Path.FillType.EVEN_ODD
+            poly.fillColor = Color.BLUE
+            poly.strokeColor = Color.parseColor("#979797")
+            poly.strokeLineCap = Paint.Cap.ROUND
+            poly.strokeWidth = 2.0f
+            poly.fillType = Path.FillType.EVEN_ODD
 
-            return polygon
+            return poly
         }
 
-        fun triangle() : PolygonData
+        fun triangle() : PolyData
         {
-            var polygon: PolygonData = PolygonData()
+            var poly: PolyData = PolyData()
             val point1 =
                     PointF(250f,
                            220f)
@@ -55,18 +55,18 @@ class AppData
                     PointF(100f,
                            400f)
 
-            polygon.closed = true
-            polygon.pathData.add(point1)
-            polygon.pathData.add(point2)
-            polygon.pathData.add(point3)
+            poly.closed = true
+            poly.pathData.add(point1)
+            poly.pathData.add(point2)
+            poly.pathData.add(point3)
 
-            polygon.fillColor = Color.MAGENTA
-            polygon.strokeColor = Color.parseColor("#897854")
-            polygon.strokeLineCap = Paint.Cap.ROUND
-            polygon.strokeWidth = 4.0f
-            polygon.fillType = Path.FillType.EVEN_ODD
+            poly.fillColor = Color.MAGENTA
+            poly.strokeColor = Color.parseColor("#897854")
+            poly.strokeLineCap = Paint.Cap.ROUND
+            poly.strokeWidth = 4.0f
+            poly.fillType = Path.FillType.EVEN_ODD
 
-            return polygon
+            return poly
         }
 
 

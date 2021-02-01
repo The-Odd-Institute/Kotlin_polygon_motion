@@ -1,89 +1,129 @@
 package com.oddinstitute.polygonmotion
 
 import android.graphics.Color
+import android.graphics.Point
+import android.graphics.PointF
+import android.util.Log
+import kotlin.math.roundToInt
 
-class Channel <T>(name: ChannelName, var type: T)
+
+// T can be float, color, or an array
+class Channel<T>(var name: ChannelName, var type: T)
 {
     var channelOffset: Int = 0
+    var channelTimeScale = 1.0f // this can never be negative
+    var channelValueScale = 1.0f // this can never be negative
 
-    var actualKeyframes: ArrayList<Keyframe<T>> = arrayListOf()
-    var displayKeyframes: ArrayList<Keyframe<T>> = arrayListOf()
+    //    var actualKeyframes: ArrayList<Keyframe<T>> = arrayListOf()
+    var keyframes: ArrayList<Keyframe<T>> = arrayListOf()
+
+    //    var displayKeyframes: ArrayList<Keyframe<T>> = arrayListOf()
     var playbackFrames: MutableList<T> = mutableListOf()
 
     var animated = false
 
+
     fun addKeyframe(keyframe: Keyframe<T>)
     {
-        if (actualKeyframes.count() == 0)
+        for (i in 0 until keyframes.count())
         {
-            actualKeyframes.add(keyframe)
-            return
-        }
-        else
-        {
-            for (i in 0 until actualKeyframes.count())
+            if (keyframes[i].frame == keyframe.frame)
             {
-                if (actualKeyframes[i].frame == keyframe.frame)
-                {
-                    // this exists
-                    actualKeyframes[i] = keyframe
-                    sortIt()
-                    return
-                }
+                // if it exists, remove it
+                keyframes.removeAt(i)
+                break
             }
-
-            actualKeyframes.add(keyframe)
-            sortIt()
         }
 
-        if ( actualKeyframes.count() > 0)
+        keyframes.add(keyframe)
+        sortIt()
+
+        if (keyframes.count() > 0)
             animated = true
     }
 
-    fun removeKeyframe ()
+    fun removeKeyframe()
     {
         // some
 
 
-        if ( actualKeyframes.count() > 0)
-            animated = true
+        // this is instead of an if statement
+        animated = keyframes.count() > 0
     }
 
     fun sortIt()
     {
-        val sorted = actualKeyframes.sortedWith(compareBy
-        { it.frame })
-        actualKeyframes.clear()
+        val sorted = keyframes.sortedWith(compareBy
+                                          { it.frame })
+        keyframes.clear()
         for (keyframe in sorted)
         {
-            actualKeyframes.add(keyframe)
+            keyframes.add(keyframe)
         }
 
-        if ( actualKeyframes.count() > 0)
+        if (keyframes.count() > 0)
             animated = true
     }
 
-    fun makeDisplayKeyframe (motionOffset: Int)
+    fun old_makeDisplayKeyframe(motionOffset: Int)
     {
-        sortIt()
-
-        displayKeyframes.clear()
-
-        for (keyframe in actualKeyframes)
-        {
-            val newOffsetFrame = keyframe.frame + motionOffset + channelOffset
-            val displayKeyframe = Keyframe(newOffsetFrame, keyframe.value)
-            displayKeyframes.add(displayKeyframe)
-        }
+//        sortIt()
+//
+//        displayKeyframes.clear()
+//
+//        for (keyframe in actualKeyframes)
+//        {
+//            val newOffsetFrame =
+//                    ((keyframe.frame * channelTimeScale) + motionOffset + channelOffset).roundToInt()
+//
+//            if (type is Float)
+//            {
+//                val displayKeyframe =
+//                        Keyframe(newOffsetFrame,
+//                                 keyframe.value as Float * channelValueScale)
+//                displayKeyframes.add(displayKeyframe as Keyframe<T>)
+//            }
+//            else if (type is Color)
+//            {
+//                val curColor = (keyframe.value as Color)
+//
+//                var r = minOf(curColor.red() * channelValueScale, 1f)
+//                var g = minOf(curColor.green() * channelValueScale, 1f)
+//                var b = minOf(curColor.blue() * channelValueScale, 1f)
+//                var a = minOf(curColor.alpha() * channelValueScale, 1f)
+//                val outColor = Color.valueOf(r, g, b, a)
+//                val displayKeyframe =
+//                        Keyframe(newOffsetFrame,
+//                                 outColor)
+//                displayKeyframes.add(displayKeyframe as Keyframe<T>)
+//
+//            }
+//            else if (type is ArrayList<*>)
+//            {
+//                val points = (keyframe.value as ArrayList<PointF>)
+//                for (i in 0 until points.count())
+//                {
+//                    points[i] = PointF(points[i].x * channelValueScale,
+//                                       points[i].y * channelValueScale)
+//                }
+//
+//                val displayKeyframe =
+//                        Keyframe(newOffsetFrame,
+//                                 points)
+//                displayKeyframes.add(displayKeyframe as Keyframe<T>)
+//            }
+//        }
     }
 
 
-    fun makePlaybackFrames(length: Int, motionOffset: Int)
+    fun old_makePlaybackFrames(length: Int, motionOffset: Int)
     {
-        makeDisplayKeyframe (motionOffset)
+        // this entire method has to be reviewed
+        // it currently doesn't account for matters such as ease in ease out
+//        makeDisplayKeyframe(motionOffset)
         playbackFrames.clear()
 
-        if (this.displayKeyframes.count() < 2)
+        if (this.keyframes.count() < 2)
             return
 
 
@@ -97,8 +137,8 @@ class Channel <T>(name: ChannelName, var type: T)
             }
 
 
-            val firstKeyFrame = this.displayKeyframes.first()
-            val lastKeyframe = this.displayKeyframes.last()
+            val firstKeyFrame = this.keyframes.first()
+            val lastKeyframe = this.keyframes.last()
 
             for (frameIndex in 0 until firstKeyFrame.frame)
             {
@@ -110,15 +150,15 @@ class Channel <T>(name: ChannelName, var type: T)
                 playbackFrames[frameIndex] = lastKeyframe.value as T
             }
 
-            val lastIndex = this.displayKeyframes.count() - 1
+            val lastIndex = this.keyframes.count() - 1
 
             for (index in 0 until lastIndex)
             {
-                val curKeyframe = this.displayKeyframes[index]
+                val curKeyframe = this.keyframes[index]
                 val curValue = curKeyframe.value as Float
                 val curFrame = curKeyframe.frame
 
-                val nextKeyframe = this.displayKeyframes[index + 1]
+                val nextKeyframe = this.keyframes[index + 1]
                 val nextValue = nextKeyframe.value as Float
                 val nextFrame = nextKeyframe.frame
 
@@ -126,6 +166,7 @@ class Channel <T>(name: ChannelName, var type: T)
                 val diffFrame = nextFrame - curFrame
 
                 val increment = diffValue / diffFrame.toFloat()
+
 
                 for (frameIndex in curFrame until nextFrame)
                 {
@@ -138,33 +179,36 @@ class Channel <T>(name: ChannelName, var type: T)
                 }
             }
         }
-        else if (type is Color) // color LONG
+        else if (type is Color)
         {
             // fill the frames
             for (i in 0..length)
             {
-                playbackFrames.add(Color.argb(0f,0f,0f,0f) as T)
+                playbackFrames.add(Color.argb(0f,
+                                              0f,
+                                              0f,
+                                              0f) as T)
             }
 
-            val firstKeyFrame = this.displayKeyframes.first()
-            val lastKeyframe = this.displayKeyframes.last()
+            val firstKeyFrame = this.keyframes.first()
+            val lastKeyframe = this.keyframes.last()
 
             for (frameIndex in 0 until firstKeyFrame.frame)
             {
-                playbackFrames[frameIndex] = firstKeyFrame.value as T
+                playbackFrames[frameIndex] = firstKeyFrame.value
             }
 
             for (frameIndex in lastKeyframe.frame..length)
             {
-                playbackFrames[frameIndex] = lastKeyframe.value as T
+                playbackFrames[frameIndex] = lastKeyframe.value
             }
 
-            val lastIndex = this.displayKeyframes.count() - 1
+            val lastIndex = this.keyframes.count() - 1
 
             for (index in 0 until lastIndex)
             {
-                val curKeyframe = this.displayKeyframes[index]
-                val curValue = curKeyframe.value as T
+                val curKeyframe = this.keyframes[index]
+                val curValue = curKeyframe.value
                 val curFrame = curKeyframe.frame
 
                 val curR = (curValue as Color).red()
@@ -173,8 +217,8 @@ class Channel <T>(name: ChannelName, var type: T)
                 val curA = (curValue as Color).alpha()
 
 
-                val nextKeyframe = this.displayKeyframes[index + 1]
-                val nextValue = nextKeyframe.value as T
+                val nextKeyframe = this.keyframes[index + 1]
+                val nextValue = nextKeyframe.value
                 val nextFrame = nextKeyframe.frame
 
 
@@ -205,13 +249,356 @@ class Channel <T>(name: ChannelName, var type: T)
                         val newValueB = curB + incrementB * (frameIndex - curFrame)
                         val newValueA = curA + incrementA * (frameIndex - curFrame)
 
-                        playbackFrames[frameIndex] = Color.valueOf(newValueA, newValueR, newValueG, newValueB) as T
+                        playbackFrames[frameIndex] =
+                                Color.valueOf(newValueR,
+                                              newValueG,
+                                              newValueB,
+                                              newValueA) as T
                     }
+                }
+            }
+        }
+        else if (type is ArrayList<*>)
+        {
+            // fill it with the current points
+            val firstKeyFrame = this.keyframes.first()
+
+            for (i in 0..length)
+            {
+                playbackFrames.add(firstKeyFrame.value as T)
+            }
+
+            val lastKeyframe = this.keyframes.last()
+
+//            for (frameIndex in 0 until firstKeyFrame.frame)
+//            {
+//                playbackFrames[frameIndex] = firstKeyFrame.value
+//            }
+
+            for (frameIndex in lastKeyframe.frame..length)
+            {
+                playbackFrames[frameIndex] = lastKeyframe.value
+            }
+
+
+            val lastKeyframeIndex = this.keyframes.count() - 1
+
+            for (keyframeIndex in 0 until lastKeyframeIndex)
+            {
+                val curKeyframe = this.keyframes[keyframeIndex]
+                val curValue = curKeyframe.value as ArrayList<PointF>
+                val curFrame = curKeyframe.frame
+
+                // here, we have a bunch of points at places
+
+                val nextKeyframe = this.keyframes[keyframeIndex + 1]
+                val nextValue = nextKeyframe.value as ArrayList<PointF>
+                val nextFrame = nextKeyframe.frame
+
+                // here, those are at different places
+
+                // between these two locations, each point has a difference and an increment
+
+                val increment = arrayListOf<PointF>()
+                for (i in 0 until curValue.count())
+                {
+                    increment.add(PointF(0f,
+                                         0f))
+                }
+                val diffFrame = nextFrame - curFrame
+
+                for (i in 0 until curValue.count())
+                {
+                    val pointIncrementX = (nextValue[i].x - curValue[i].x) / diffFrame.toFloat()
+                    val pointIncrementY = (nextValue[i].y - curValue[i].y) / diffFrame.toFloat()
+                    increment[i] =
+                            PointF(pointIncrementX,
+                                   pointIncrementY)
+                }
+
+                for (frameIndex in curFrame until nextFrame)
+                {
+                    if (frameIndex in 0 until length)
+                    {
+                        // each point should get its increment, go to the array
+                        // the array should then go to the playback frames
+                        val pointsArr = ArrayList<PointF>()
+
+                        for (i in 0 until curValue.count())
+                        {
+                            val nextPositionOfPoint =
+                                    PointF(curValue[i].x + increment[i].x * (frameIndex - curFrame),
+                                           curValue[i].y + increment[i].y * (frameIndex - curFrame))
+                            pointsArr.add(nextPositionOfPoint)
+                        }
+
+                        playbackFrames[frameIndex] = pointsArr as T
+                    }
+                }
+            }
+        }
+    }
+
+    fun makePlaybackFrames(length: Int, motionOffset: Int)
+    {
+        // this entire method has to be reviewed
+        // it currently doesn't account for matters such as ease in ease out
+
+        playbackFrames.clear()
+
+        if (this.keyframes.count() < 2)
+            return
+
+
+        // find utmost left keyframe
+        var utmostLeftFrame = 100_000
+
+        // let's find the utmost left frame
+        for (keyframe in keyframes)
+        {
+            if (keyframe.frame < utmostLeftFrame)
+                utmostLeftFrame = keyframe.frame
+        }
+
+        // shift every keyframe in a way that the utmost left is at 0
+        var shiftedKeyframes: ArrayList<Keyframe<T>> = arrayListOf()
+        for (keyframe in keyframes)
+        {
+            val shiftedFrame = keyframe.frame - utmostLeftFrame
+            val shiftedKeyframe =
+                    Keyframe<T>(shiftedFrame,
+                                keyframe.value)
+            shiftedKeyframes.add(shiftedKeyframe)
+        }
+
+
+        // make the frames for the duration of the keyframes
+        val firstShiftedKeyframe = shiftedKeyframes.first() as Keyframe<T>
+        val lastShiftedKeyframe = shiftedKeyframes.last() as Keyframe<T>
+        val lastKeyframe = keyframes.last() as Keyframe<T>
+
+        //
+        var shiftedPlaybackFrames: MutableList<T> = mutableListOf()
+
+        // fill the shifted frames
+        // this is very important. Shifted play back frames should only
+        // fill where there are keyframes, not before or after
+        for (i in firstShiftedKeyframe.frame..lastShiftedKeyframe.frame)
+        {
+            shiftedPlaybackFrames.add(0f as T)
+        }
+
+        val lastIndex = this.keyframes.count() - 1
+
+        for (index in 0 until lastIndex)
+        {
+            val curKeyframe = shiftedKeyframes[index]
+            val curFrame = curKeyframe.frame
+            val nextKeyframe = shiftedKeyframes[index + 1]
+            val nextFrame = nextKeyframe.frame
+            val diffFrame = nextFrame - curFrame
+
+            if (type is Float)
+            {
+                val curValue = curKeyframe.value as Float
+                val nextValue = nextKeyframe.value as Float
+                val diffValue: Float = nextValue - curValue
+                val increment = diffValue / diffFrame.toFloat()
+
+                // from current frame to next including next
+                // these will be re-written, but the last keyframe will have its value
+                for (frameIndex in curFrame..nextFrame)
+                {
+                    val newValue: Float = curValue + increment * (frameIndex - curFrame)
+                    shiftedPlaybackFrames[frameIndex] = newValue as T
+                }
+            }
+            else if (type is Color)
+            {
+                val curValue = curKeyframe.value as Color
+                val nextValue = nextKeyframe.value as Color
+
+                val diffValue: MyColor = MyColor(nextValue) - MyColor(curValue)
+
+                val increment : MyColor = diffValue / diffFrame
+
+                for (frameIndex in curFrame..nextFrame)
+                {
+                    val newVal : MyColor = MyColor(curValue) + increment * (frameIndex - curFrame)
+
+                    shiftedPlaybackFrames[frameIndex] = newVal.color() as T
+                }
+            }
+            else // arraylist
+            {
+                val curValue = curKeyframe.value as ArrayList<PointF>
+                // here, we have a bunch of points at places
+                val nextValue = nextKeyframe.value as ArrayList<PointF>
+
+                // here, those are at different places
+                // between these two locations, each point has a difference and an increment
+
+                val diffValue: ArrayList<PointF> = nextValue - curValue
+                val increment = diffValue / diffFrame
+
+                for (frameIndex in curFrame..nextFrame)
+                {
+                    // each point should get its increment, go to the array
+                    // the array should then go to the playback frames
+                    val newVal : ArrayList<PointF> = curValue + (increment * (frameIndex - curFrame))
+                    shiftedPlaybackFrames[frameIndex] = newVal as T
+
                 }
             }
         }
 
 
+        // now, the shifted playback frames are set
+        // fill the frames
+        for (i in 0..length)
+        {
+            // we add type instead of adding float, color and array seperately
+            playbackFrames.add(type)
+        }
 
+//        var unshiftedPlaybackFrames: MutableList<T> = mutableListOf()
+
+
+        for (i in 0..length)
+        {
+            if (i < utmostLeftFrame)
+            {
+                playbackFrames[i] = firstShiftedKeyframe.value
+            }
+            else if (i >= lastKeyframe.frame)
+            {
+                playbackFrames[i] = lastKeyframe.value
+            }
+            else
+            {
+                // 20
+                if (i in 0..length)
+                    playbackFrames[i] = shiftedPlaybackFrames[i - utmostLeftFrame]
+            }
+
+        }
+    }
+
+    fun scaleFromRight(ratio: Float, length: Int, motionOffset: Int)
+    {
+        // left corner is pivot
+        var utmostLeftFrame = 100_000
+
+        if (keyframes.count() < 2)
+            return
+
+        // let's find the utmost left frame
+        for (keyframe in keyframes)
+        {
+            if (keyframe.frame < utmostLeftFrame)
+                utmostLeftFrame = keyframe.frame
+        }
+
+
+        var temp: ArrayList<Keyframe<T>> = arrayListOf()
+
+        // let's shift everyone
+        for (keyframe in keyframes)
+        {
+            val currentFrame = keyframe.frame
+            val newFrame =
+                    ((currentFrame - utmostLeftFrame) * ratio).roundToInt() + utmostLeftFrame + channelOffset + motionOffset
+            val adjustedKeyframe =
+                    Keyframe<T>(newFrame,
+                                keyframe.value)
+            temp.add(adjustedKeyframe)
+        }
+
+        keyframes = temp
+        makePlaybackFrames(length,
+                           motionOffset)
+    }
+
+
+    fun scaleFromLeft(ratio: Float, length: Int, motionOffset: Int)
+    {
+        // right corner is pivot
+        var utmostRightFrame = -100_000
+
+        if (keyframes.count() < 2)
+            return
+
+        // let's find the utmost right frame
+        for (keyframe in keyframes)
+        {
+            if (keyframe.frame > utmostRightFrame)
+                utmostRightFrame = keyframe.frame
+        }
+
+
+        var temp: ArrayList<Keyframe<T>> = arrayListOf()
+
+        // let's shift everyone
+        for (keyframe in keyframes)
+        {
+            val currentFrame = keyframe.frame
+            val newFrame =
+                    ((currentFrame - utmostRightFrame) * ratio).roundToInt() + utmostRightFrame + channelOffset + motionOffset
+            val adjustedKeyframe =
+                    Keyframe<T>(newFrame,
+                                keyframe.value)
+            temp.add(adjustedKeyframe)
+        }
+
+        keyframes = temp
+        makePlaybackFrames(length,
+                           motionOffset)
+    }
+
+
+    fun scaleFromBothLeftAndRight(ratio: Float, length: Int, motionOffset: Int)
+    {
+        // middle is pivot
+        var utmostRightFrame = -100_000
+        var utmostLeftFrame = 100_000
+
+        if (keyframes.count() < 2)
+            return
+
+        // let's find the utmost right frame
+        for (keyframe in keyframes)
+        {
+            if (keyframe.frame > utmostRightFrame)
+                utmostRightFrame = keyframe.frame
+        }
+
+        // let's find the utmost left frame
+        for (keyframe in keyframes)
+        {
+            if (keyframe.frame < utmostLeftFrame)
+                utmostLeftFrame = keyframe.frame
+        }
+
+        // 20 , 50
+        val midFrame = (utmostRightFrame - utmostLeftFrame) / 2 + utmostLeftFrame
+
+
+        var temp: ArrayList<Keyframe<T>> = arrayListOf()
+
+        // let's shift everyone
+        for (keyframe in keyframes)
+        {
+            val currentFrame = keyframe.frame
+            val newFrame =
+                    ((currentFrame - midFrame) * ratio).roundToInt() + midFrame + channelOffset + motionOffset
+            val adjustedKeyframe =
+                    Keyframe<T>(newFrame,
+                                keyframe.value)
+            temp.add(adjustedKeyframe)
+        }
+
+        keyframes = temp
+        makePlaybackFrames(length,
+                           motionOffset)
     }
 }

@@ -5,7 +5,7 @@ import android.graphics.Paint
 import android.graphics.Path
 import android.graphics.PointF
 
-class PolygonData
+class PolyData
 {
     var pathData: ArrayList<PointF> = arrayListOf()
     var strokeWidth = 0.0f
@@ -14,8 +14,9 @@ class PolygonData
     var strokeColor = Color.TRANSPARENT
 
 
-    var strokeLineCap : Paint.Cap = Paint.Cap.ROUND
+    // should these three be private?
 
+    var strokeLineCap : Paint.Cap = Paint.Cap.ROUND
     var fillType = Path.FillType.EVEN_ODD
     var closed = true
 }

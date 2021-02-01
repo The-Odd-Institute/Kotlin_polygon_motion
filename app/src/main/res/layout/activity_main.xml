@@ -101,4 +101,87 @@
         app:layout_constraintStart_toStartOf="@+id/timeSeekbar"
         app:layout_constraintTop_toBottomOf="@+id/timeSeekbar" />
 
+    <Button
+        android:id="@+id/offsetButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:text="Offset"
+        app:layout_constraintStart_toStartOf="@+id/relativeLayout2"
+        app:layout_constraintTop_toBottomOf="@+id/relativeLayout2" />
+
+    <EditText
+        android:id="@+id/channelOffsetEditText"
+        android:layout_width="128dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="20dp"
+        android:text="0"
+        android:ems="10"
+        app:layout_constraintStart_toEndOf="@+id/offsetButton"
+        app:layout_constraintTop_toTopOf="@+id/offsetButton" />
+
+    <EditText
+        android:id="@+id/motionOffsetEditText"
+        android:layout_width="128dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="20dp"
+        android:text="0"
+        android:ems="10"
+        app:layout_constraintStart_toEndOf="@+id/channelOffsetEditText"
+        app:layout_constraintTop_toTopOf="@+id/channelOffsetEditText" />
+
+    <EditText
+        android:id="@+id/channelScaleEditText"
+        android:layout_width="128dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="50dp"
+        android:text="2"
+
+        android:ems="10"
+        app:layout_constraintStart_toEndOf="@+id/motionOffsetEditText"
+        app:layout_constraintTop_toTopOf="@+id/motionOffsetEditText" />
+
+    <TextView
+        android:id="@+id/textView"
+        android:layout_width="wrap_content"
+        android:layout_height="16dp"
+        android:text="Channel Offset"
+        app:layout_constraintBottom_toTopOf="@+id/channelOffsetEditText"
+        app:layout_constraintStart_toStartOf="@+id/channelOffsetEditText" />
+
+    <TextView
+        android:id="@+id/textView2"
+        android:layout_width="wrap_content"
+        android:layout_height="16dp"
+        android:text="Motion Offset"
+        app:layout_constraintBottom_toTopOf="@+id/motionOffsetEditText"
+        app:layout_constraintStart_toStartOf="@+id/motionOffsetEditText" />
+
+    <TextView
+        android:id="@+id/textView3"
+        android:layout_width="wrap_content"
+        android:layout_height="16dp"
+        android:text="Channel Scale"
+        app:layout_constraintBottom_toTopOf="@+id/channelScaleEditText"
+        app:layout_constraintStart_toStartOf="@+id/channelScaleEditText" />
+
+    <EditText
+        android:id="@+id/motionScaleEditText"
+        android:layout_width="128dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="20dp"
+        android:text="1.5"
+
+        android:ems="10"
+        app:layout_constraintStart_toEndOf="@+id/channelScaleEditText"
+        app:layout_constraintTop_toTopOf="@+id/channelScaleEditText" />
+
+    <TextView
+        android:id="@+id/textView4"
+        android:layout_width="wrap_content"
+        android:layout_height="16dp"
+        android:text="Motion Scale"
+        app:layout_constraintBottom_toTopOf="@+id/motionScaleEditText"
+        app:layout_constraintStart_toStartOf="@+id/motionScaleEditText" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

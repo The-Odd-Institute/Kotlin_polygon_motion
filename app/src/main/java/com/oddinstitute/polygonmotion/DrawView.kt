@@ -3,9 +3,7 @@ package com.oddinstitute.polygonmotion
 import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.*
-import android.view.MotionEvent
 import android.view.View
-import android.view.View.OnTouchListener
 
 class DrawView : View
 {
@@ -30,7 +28,7 @@ class DrawView : View
 
 
 
-    fun makePathFor(data: PolygonData): Path
+    fun makePathFor(data: PolyData): Path
     {
         // Here, draw the MAIN Path
         var path = Path()
@@ -66,7 +64,7 @@ class DrawView : View
             for (i in 0 until artwork.polygons.count())
             {
                 val polygon = artwork.polygons[i]
-                val path = makePathFor(polygon.data)
+                val path = makePathFor(polygon.polyData)
                 polygon.path = path
                 artwork.polygons[i] = polygon
             }
@@ -82,7 +80,7 @@ class DrawView : View
             for (each in artwork.polygons)
             {
                 val path = each.path
-                val data = each.data
+                val data = each.polyData
                 styleFillPaint(data)
                 canvas.drawPath(path,
                                 mainPaint)
@@ -107,21 +105,21 @@ class DrawView : View
     }
 
 
-    fun styleBorderPaint(polygonData: PolygonData)
+    fun styleBorderPaint(polyData: PolyData)
     {
         // stroke
         mainPaint.style = Paint.Style.STROKE
-        mainPaint.strokeWidth = polygonData.strokeWidth
-        mainPaint.color = polygonData.strokeColor
-        mainPaint.strokeCap = polygonData.strokeLineCap
+        mainPaint.strokeWidth = polyData.strokeWidth
+        mainPaint.color = polyData.strokeColor
+        mainPaint.strokeCap = polyData.strokeLineCap
     }
 
 
-    fun styleFillPaint(polygonData: PolygonData)
+    fun styleFillPaint(polyData: PolyData)
     {
         // fill
         mainPaint.style = Paint.Style.FILL
-        mainPaint.color = polygonData.fillColor
+        mainPaint.color = polyData.fillColor
     }
 }
 

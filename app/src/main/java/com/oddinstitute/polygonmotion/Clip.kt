@@ -101,7 +101,7 @@ class Clip
                             0,
                             0)
         mainClip.layoutParams = myParams
-        mainClip.setBackgroundColor(motion.motionData.color)
+        mainClip.setBackgroundColor(motion.motionData.clipColor)
         mainClip.setOnTouchListener(onTouchListener())
         containerLayout.addView(mainClip)
 

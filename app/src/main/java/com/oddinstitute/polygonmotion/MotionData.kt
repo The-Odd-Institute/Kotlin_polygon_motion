@@ -18,7 +18,7 @@ class MotionData
     var clipLength: Int = 0
 
     var name: String = "Motion"
-    var color: Int = Color.TRANSPARENT
+    var clipColor: Int = Color.TRANSPARENT
 
 
     var translateX: Channel<Float> = Channel(ChannelName.TranslateX, 0f)
@@ -29,8 +29,8 @@ class MotionData
     var alpha: Channel<Float> = Channel(ChannelName.Alpha, 0f)
 
     // this is complicated data set
-//    var data: Channel <ArrayList<PointF>> = Channel(ChannelName.Data, arrayOf())
 
+    var pathData: Channel <ArrayList<PointF>> = Channel(ChannelName.Shape, arrayListOf())
 
     var fillColor: Channel<Color> = Channel(ChannelName.FillColor, Color())
     var strokeColor: Channel<Color> = Channel(ChannelName.StrokeColor, Color())
@@ -44,7 +44,7 @@ class MotionData
                            scaleX,
                            scaleY,
                            alpha,
-//                           data,
+                           pathData,
                            fillColor,
                            strokeColor,
                            strokeWidth)
@@ -65,7 +65,7 @@ class MotionData
         var end: Int = 0
         for (channel in channels)
         {
-            for (any in channel.displayKeyframes)
+            for (any in channel.keyframes)
             {
                 if (any.frame < clipStart)
                     clipStart = any.frame
