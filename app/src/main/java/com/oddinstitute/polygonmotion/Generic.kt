@@ -1,6 +1,7 @@
 package com.oddinstitute.polygonmotion
 
 import android.graphics.Color
+import android.graphics.Path
 import android.graphics.Point
 import android.graphics.PointF
 import kotlin.math.roundToInt
@@ -24,13 +25,18 @@ fun Int.toFloatColor (): Float
     return (this.toFloat() / 255)
 }
 
-fun Color.add(col: Color) : Color
-{
-    return Color.valueOf(this.red() + col.red(),
-                        this.green() + col.green(),
-                        this.blue() + col.blue(),
-                        this.alpha() + col.alpha())
-}
+//
+//fun Color.add(col: Color) : Color
+//{
+//    return Color.valueOf(this.red() + col.red(),
+//                        this.green() + col.green(),
+//                        this.blue() + col.blue(),
+//                        this.alpha() + col.alpha())
+//}
+//
+
+fun Boolean.toInt() = if (this) 1 else 0
+
 
 operator fun Color.plus (other: Color): Color = Color.valueOf(this.red() + other.red(),
                                                               this.green() + other.green(),
@@ -41,7 +47,7 @@ operator fun MyColor.plus (other: MyColor): MyColor = MyColor(this.r + other.r,
                                                              this.g + other.g,
                                                              this.b + other.b,
                                                              this.a + other.a)
-
+//
 operator fun Color.times (other: Int): Color = Color.valueOf(this.red() * other,
                                                             this.green() * other,
                                                             this.blue() * other,
@@ -59,10 +65,10 @@ operator fun Color.div (other: Float): Color = Color.valueOf(this.red() / other,
                                                               this.alpha() / other)
 
 
-operator fun Color.minus (other: Color): Color = Color.valueOf(this.red() - other.red(),
-                                                              this.green() - other.green(),
-                                                              this.blue() - other.blue(),
-                                                              this.alpha() - other.alpha())
+//operator fun Color.minus (other: Color): Color = Color.valueOf(this.red() - other.red(),
+//                                                              this.green() - other.green(),
+//                                                              this.blue() - other.blue(),
+//                                                              this.alpha() - other.alpha())
 
 operator fun ArrayList<PointF>.minus (other: ArrayList<PointF>): ArrayList<PointF> = run {
     val res: ArrayList<PointF> = arrayListOf()
@@ -87,7 +93,6 @@ operator fun ArrayList<PointF>.div (other: Int): ArrayList<PointF> = run {
     }
     return res
 }
-
 operator fun ArrayList<PointF>.plus (other: ArrayList<PointF>): ArrayList<PointF> = run {
     val res: ArrayList<PointF> = arrayListOf()
 
@@ -100,8 +105,6 @@ operator fun ArrayList<PointF>.plus (other: ArrayList<PointF>): ArrayList<PointF
 
     return res
 }
-
-
 operator fun ArrayList<PointF>.times (other: Int): ArrayList<PointF> = run {
     val res: ArrayList<PointF> = arrayListOf()
 
@@ -121,7 +124,6 @@ operator fun MyColor.minus (other: MyColor) = MyColor (this.r - other.r,
                                                       this.g - other.g,
                                                       this.b - other.b,
                                                       this.a - other.a)
-
 operator fun MyColor.div (other: Int) = MyColor (this.r / other.toFloat(),
                                                   this.g / other.toFloat(),
                                                   this.b / other.toFloat(),
@@ -156,7 +158,19 @@ class MyColor ()
 
 
 
+fun Path.moveToPoint(point: PointF)
+{
+    this.moveTo(point.x,
+                point.y)
+}
+
+fun Path.lineToPoint(point: PointF)
+{
+    this.lineTo(point.x,
+                point.y)
+}
 
 
-
-//operator fun Point.plus(other: Point): Point = Point(x + other.x, y + other.y)
+//
+//
+//

@@ -2,23 +2,25 @@ package com.oddinstitute.polygonmotion
 
 import android.graphics.Color
 import android.graphics.PointF
+import android.util.Log
 
 
 fun MainActivity.temp_makeSquareMotionsFirstSeries ()
 {
-//    temp_MakeSquareFillColorMotionFirst()
-//    temp_MakeSquareStrokeColorMotionFirst()
+    temp_MakeSquareFillColorMotionFirst()
+    temp_MakeSquareStrokeColorMotionFirst()
     temp_MakeSquareStrokeWidthMotionFirst()
-//    temp_MakeSquareShapeMotionFirst()
+    temp_MakeSquareShapeMotionFirst()
 }
 
 fun MainActivity.temp_makeSquareMotionsSecondsSeries ()
 {
-//    temp_MakeSquareFillColorMotionSecond()
-//    temp_MakeSquareStrokeColorMotionSecond()
+    temp_MakeSquareFillColorMotionSecond()
+    temp_MakeSquareStrokeColorMotionSecond()
     temp_MakeSquareStrokeWidthMotionSecond()
-//    temp_MakeSquareShapeMotionSecond()
-}
+    temp_MakeSquareShapeMotionSecond()
+
+ }
 
 // First Series
 fun MainActivity.temp_MakeSquareFillColorMotionFirst()
@@ -37,7 +39,6 @@ fun MainActivity.temp_MakeSquareFillColorMotionFirst()
                           0f,
                           1f)
 
-
     val red =
             Color.valueOf(1f,
                           0f,
@@ -45,14 +46,15 @@ fun MainActivity.temp_MakeSquareFillColorMotionFirst()
                           1f)
 
     val keyframeOneFillColor: Keyframe<Color> =
-            Keyframe(0,
+            Keyframe(-40,
                      blue)
+
     val keyframeTwoFillColor: Keyframe<Color> =
-            Keyframe(100,
+            Keyframe(5000,
                      green)
 
         val keyframeFourFillColor: Keyframe<Color> =
-            Keyframe(20,
+            Keyframe(60,
                      red)
 
 
@@ -66,8 +68,6 @@ fun MainActivity.temp_MakeSquareFillColorMotionFirst()
                                    squareColorMotionData)
 
     squarePolygon.addMotion(squareColorMotion, duration.toFrames())
-
-
 }
 
 fun MainActivity.temp_MakeSquareStrokeColorMotionFirst()
@@ -92,14 +92,14 @@ fun MainActivity.temp_MakeSquareStrokeColorMotionFirst()
                           1f)
 
     val keyframeOneFillColor: Keyframe<Color> =
-            Keyframe(100,
+            Keyframe(10,
                      red)
     val keyframeTwoFillColor: Keyframe<Color> =
-            Keyframe(200,
+            Keyframe(20,
                      green)
 
     val keyframeThreeFillColor: Keyframe<Color> =
-            Keyframe(300,
+            Keyframe(30,
                      next)
 
 
@@ -112,8 +112,6 @@ fun MainActivity.temp_MakeSquareStrokeColorMotionFirst()
                                          squareStrokeColorMotionData)
 
     squarePolygon.addMotion(squareStrokeColorMotion, duration.toFrames())
-
-//        squarePolygon.motions.add(squareStrokeColorMotion)
 }
 
 fun MainActivity.temp_MakeSquareStrokeWidthMotionFirst()
@@ -121,9 +119,9 @@ fun MainActivity.temp_MakeSquareStrokeWidthMotionFirst()
     var squareStrokeWidthMotionData = MotionData()
 
 
-    val keyframeOneStrokeWidth : Keyframe<Float> = Keyframe(20, 20f)
+    val keyframeOneStrokeWidth : Keyframe<Float> = Keyframe(50, 20f)
     val keyframeTwoStrokeWidth : Keyframe<Float> = Keyframe(30, 30f)
-    val keyframeThreeStrokeWidth : Keyframe<Float> = Keyframe(40, 40f)
+    val keyframeThreeStrokeWidth : Keyframe<Float> = Keyframe(10, 40f)
 
 
     squareStrokeWidthMotionData.strokeWidth.addKeyframe(keyframeOneStrokeWidth)
@@ -134,10 +132,7 @@ fun MainActivity.temp_MakeSquareStrokeWidthMotionFirst()
                                                  .toString(),
                                          squareStrokeWidthMotionData)
 
-//        squarePolygon.motions.add(squareStrokeWidthMotion)
     squarePolygon.addMotion(squareStrokeWidthMotion, duration.toFrames())
-
-
 }
 
 fun MainActivity.temp_MakeSquareShapeMotionFirst()
@@ -159,14 +154,14 @@ fun MainActivity.temp_MakeSquareShapeMotionFirst()
                                  PointF(pointsTwo[3].x - 100, pointsTwo[3].y - 100))
 
     val keyframeOneShape: Keyframe<ArrayList<PointF>> =
-            Keyframe(400,
+            Keyframe(10,
                      curPoints)
     val keyframeTwoShape: Keyframe<ArrayList<PointF>> =
-            Keyframe(500,
+            Keyframe(20,
                      pointsTwo)
 
     val keyframeThreeShape: Keyframe<ArrayList<PointF>> =
-            Keyframe(600,
+            Keyframe(30,
                      pointsNext)
 
 
@@ -178,9 +173,7 @@ fun MainActivity.temp_MakeSquareShapeMotionFirst()
                                            .toString(),
                                    squareShapeMotionData)
 
-//        squarePolygon.motions.add(squareShapeMotion)
     squarePolygon.addMotion(squareShapeMotion, duration.toFrames())
-
 }
 
 
@@ -201,10 +194,10 @@ fun MainActivity.temp_MakeTriangleShapeMotion()
                                  PointF(700f, 300f))
 
     val keyframeOneShape: Keyframe<ArrayList<PointF>> =
-            Keyframe(600,
+            Keyframe(60,
                      curPoints)
     val keyframeTwoShape: Keyframe<ArrayList<PointF>> =
-            Keyframe(700,
+            Keyframe(70,
                      pointsTwo)
 
     val keyframeThreeShape: Keyframe<ArrayList<PointF>> =
@@ -220,9 +213,7 @@ fun MainActivity.temp_MakeTriangleShapeMotion()
                                             .toString(),
                                     triangleShapeMotionData)
 
-//        trianglePolygon.motions.add(trianglShapeMotion)
     trianglePolygon.addMotion(trianglShapeMotion, duration.toFrames())
-
 }
 
 
@@ -230,6 +221,51 @@ fun MainActivity.temp_MakeTriangleShapeMotion()
 fun MainActivity.temp_MakeSquareFillColorMotionSecond()
 {
     var squareColorMotionData = MotionData()
+
+
+    val yellow =
+            Color.valueOf(1f,
+                          1f,
+                          0f,
+                          1f)
+    val cyan =
+            Color.valueOf(0f,
+                          1f,
+                          1f,
+                          1f)
+
+    val magenta =
+            Color.valueOf(1f,
+                          0f,
+                          1f,
+                          1f)
+
+    val keyframeOneFillColor: Keyframe<Color> =
+            Keyframe(10,
+                     yellow)
+    val keyframeTwoFillColor: Keyframe<Color> =
+            Keyframe(20,
+                     cyan)
+
+    val keyframeThreeFillColor: Keyframe<Color> =
+            Keyframe(30,
+                     magenta)
+
+
+    squareColorMotionData.fillColor.addKeyframe(keyframeOneFillColor)
+    squareColorMotionData.fillColor.addKeyframe(keyframeTwoFillColor)
+    squareColorMotionData.fillColor.addKeyframe(keyframeThreeFillColor)
+
+    val squareColorMotion = Motion(java.util.UUID.randomUUID()
+                                           .toString(),
+                                   squareColorMotionData)
+
+    squarePolygon.addMotion(squareColorMotion, duration.toFrames())
+}
+
+fun MainActivity.temp_MakeSquareStrokeColorMotionSecond()
+{
+    var squareStrokeColorMotionData = MotionData()
 
     val blue =
             Color.valueOf(0.5f,
@@ -243,70 +279,23 @@ fun MainActivity.temp_MakeSquareFillColorMotionSecond()
                           .2f)
 
 
-    val next =
+    val red =
             Color.valueOf(1f,
                           0f,
                           0f,
                           1f)
 
-    val keyframeOneFillColor: Keyframe<Color> =
-            Keyframe(800,
-                     blue)
-    val keyframeTwoFillColor: Keyframe<Color> =
-            Keyframe(900,
-                     green)
-
-    val keyframeThreeFillColor: Keyframe<Color> =
-            Keyframe(1000,
-                     next)
-
-
-    squareColorMotionData.fillColor.addKeyframe(keyframeOneFillColor)
-    squareColorMotionData.fillColor.addKeyframe(keyframeTwoFillColor)
-    squareColorMotionData.fillColor.addKeyframe(keyframeThreeFillColor)
-
-    val squareColorMotion = Motion(java.util.UUID.randomUUID()
-                                           .toString(),
-                                   squareColorMotionData)
-
-//        squarePolygon.motion = squareColorMotion
-    squarePolygon.addMotion(squareColorMotion, duration.toFrames())
-//        squarePolygon.motions.qergadd(squareColorMotion)
-
-
-}
-
-fun MainActivity.temp_MakeSquareStrokeColorMotionSecond()
-{
-    var squareStrokeColorMotionData = MotionData()
-
-    val red =
-            Color.valueOf(.7f,
-                          .6f,
-                          .5f,
-                          1f)
-    val green =
-            Color.valueOf(0f,
-                          0f,
-                          0f,
-                          .2f)
-
-    val next =
-            Color.valueOf(0f,
-                          .1f,
-                          .5f,
-                          1f)
 
     val keyframeOneFillColor: Keyframe<Color> =
-            Keyframe(900,
+            Keyframe(90,
                      red)
     val keyframeTwoFillColor: Keyframe<Color> =
-            Keyframe(1000,
+            Keyframe(100,
                      green)
 
     val keyframeThreeFillColor: Keyframe<Color> =
-            Keyframe(1100,
-                     next)
+            Keyframe(110,
+                     blue)
 
 
     squareStrokeColorMotionData.strokeColor.addKeyframe(keyframeOneFillColor)
@@ -318,8 +307,6 @@ fun MainActivity.temp_MakeSquareStrokeColorMotionSecond()
                                          squareStrokeColorMotionData)
 
     squarePolygon.addMotion(squareStrokeColorMotion, duration.toFrames())
-
-//        squarePolygon.motions.add(squareStrokeColorMotion)
 }
 
 fun MainActivity.temp_MakeSquareStrokeWidthMotionSecond()
@@ -328,7 +315,7 @@ fun MainActivity.temp_MakeSquareStrokeWidthMotionSecond()
 
 
     val keyframeOneStrokeWidth : Keyframe<Float> = Keyframe(40, 160f)
-    val keyframeTwoStrokeWidth : Keyframe<Float> = Keyframe(70, 70f)
+    val keyframeTwoStrokeWidth : Keyframe<Float> = Keyframe(25, 70f)
     val keyframeThreeStrokeWidth : Keyframe<Float> = Keyframe(80, 80f)
 
 
@@ -340,7 +327,6 @@ fun MainActivity.temp_MakeSquareStrokeWidthMotionSecond()
                                                  .toString(),
                                          squareStrokeWidthMotionData)
 
-//        squarePolygon.motions.add(squareStrokeWidthMotion)
     squarePolygon.addMotion(squareStrokeWidthMotion, duration.toFrames())
 
 
@@ -365,14 +351,14 @@ fun MainActivity.temp_MakeSquareShapeMotionSecond()
                                  PointF(2120f,355f))
 
     val keyframeOneShape: Keyframe<ArrayList<PointF>> =
-            Keyframe(1100,
+            Keyframe(110,
                      curPoints)
     val keyframeTwoShape: Keyframe<ArrayList<PointF>> =
-            Keyframe(1200,
+            Keyframe(120,
                      pointsTwo)
 
     val keyframeThreeShape: Keyframe<ArrayList<PointF>> =
-            Keyframe(1300,
+            Keyframe(130,
                      pointsNext)
 
 
@@ -384,7 +370,6 @@ fun MainActivity.temp_MakeSquareShapeMotionSecond()
                                            .toString(),
                                    squareShapeMotionData)
 
-//        squarePolygon.motions.add(squareShapeMotion)
     squarePolygon.addMotion(squareShapeMotion, duration.toFrames())
 
 }

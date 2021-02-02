@@ -2,9 +2,9 @@ package com.oddinstitute.polygonmotion
 
 import android.graphics.Color
 import android.graphics.PointF
+import android.util.Log
 import androidx.annotation.ColorRes
 import kotlin.math.roundToInt
-
 
 // this class is a generic class that hold one to all sorts of channels
 // that together build the motion of an object
@@ -20,7 +20,6 @@ class MotionData
     var name: String = "Motion"
     var clipColor: Int = Color.TRANSPARENT
 
-
     var translateX: Channel<Float> = Channel(ChannelName.TranslateX, 0f)
     var translateY: Channel<Float> = Channel(ChannelName.TranslateY, 0f)
     var rotate: Channel<Float> = Channel(ChannelName.Rotate, 0f)
@@ -28,14 +27,11 @@ class MotionData
     var scaleY: Channel<Float> = Channel(ChannelName.ScaleY, 0f)
     var alpha: Channel<Float> = Channel(ChannelName.Alpha, 0f)
 
-    // this is complicated data set
-
-    var pathData: Channel <ArrayList<PointF>> = Channel(ChannelName.Shape, arrayListOf())
-
     var fillColor: Channel<Color> = Channel(ChannelName.FillColor, Color())
     var strokeColor: Channel<Color> = Channel(ChannelName.StrokeColor, Color())
-
     var strokeWidth: Channel<Float> = Channel(ChannelName.StrokeWidth, 0f)
+    // this is complicated data set
+    var pathData: Channel <ArrayList<PointF>> = Channel(ChannelName.Shape, arrayListOf())
 
 
     var channels = arrayOf(translateX,
@@ -44,16 +40,21 @@ class MotionData
                            scaleX,
                            scaleY,
                            alpha,
-                           pathData,
                            fillColor,
                            strokeColor,
-                           strokeWidth)
-
+                           strokeWidth,
+                           pathData)
 
     fun makePlaybackFrames(length: Int)
     {
         for (channel in channels)
         {
+//            Log.d("Tag", "Round")
+//            for (keyframe in channel.keyframes)
+//            {
+//                Log.d("Tag", "at ${keyframe.frame} color is -> ${keyframe.value}")
+//            }
+
             if (channel.keyframes.count() > 1)
                 channel.makePlaybackFrames(length)
         }

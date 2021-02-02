@@ -10,7 +10,7 @@ class AppData
 {
     companion object
     {
-
+        // this is all temp
         fun square() : PolyData
         {
             var poly: PolyData = PolyData()

@@ -80,8 +80,8 @@ class Clip
         mainClip.textSize = 14f
 
 
-        motion.motionData.calculateStartLength()
-//        width = lengthToWidth(motion.length).toInt()
+//        motion.motionData.calculateStartLength()
+
         width = lengthToWidth(motion.motionData.clipLength)
 
 
@@ -89,12 +89,7 @@ class Clip
                 RelativeLayout.LayoutParams(width,
                                             ViewGroup.LayoutParams.MATCH_PARENT)
 
-//        marginLeft = widthToLength(totalFrames, holderWidth).toInt()
-//        marginLeft = lengthToWidth(motion.startFrame, holderWidth)
         marginLeft = lengthToWidth(motion.motionData.clipStart) + playableMarginToContainer
-
-//        Log.d("MyTag", "total widht is: ${holderWidth}\nstartframe is: ${motion.startFrame}\nmargine is: ${marginLeft}\nlength is: ${motion.length}\nwidth is: $curWidth")
-
 
         myParams.setMargins(marginLeft,
                             0,
@@ -111,7 +106,7 @@ class Clip
                 RelativeLayout.LayoutParams(containerHeight / 2,
                                             containerHeight)
         leftHandleParams.marginStart = marginLeft
-//        leftHandleParams.setMargins(marginLeft, 0, 0, 0)
+
         leftHandle.layoutParams = leftHandleParams
         leftHandle.setBackgroundColor(Color.argb(.3f,
                                                  .8f,
@@ -126,7 +121,7 @@ class Clip
                 RelativeLayout.LayoutParams(containerHeight / 2,
                                             containerHeight)
         rightHandleParams.marginStart = marginLeft + width - containerHeight / 2
-//        rightHandleParams.setMargins(marginLeft + width - height / 2 , 0, 0, marginLeft)
+
         rightHandle.layoutParams = rightHandleParams
         rightHandle.setBackgroundColor(Color.argb(.3f,
                                                   .8f,
@@ -135,26 +130,10 @@ class Clip
         rightHandle.setOnTouchListener(onTouchListener())
         containerLayout.addView(rightHandle)
 
-
-//        val keyFrames: ArrayList<Keyframe> = arrayListOf()
-//
-//        for (key in motion.tx)
-//        {
-//            keyFrames.add(key)
-//        }
-//        for (key in motion.ty)
-//        {
-//
-//        }
-
-
         bringToFont()
-
 
         previousWidth = width
     }
-
-
 
     fun widthToLength(width: Int): Int
     {

@@ -50,7 +50,7 @@ class MainActivity : AppCompatActivity()
         artwork.polygons.add(trianglePolygon)
 //
 ////         this is temp
-//        temp_MakeTriangleShapeMotion ()
+        temp_MakeTriangleShapeMotion ()
 
 
         drawView = DrawView(this,
@@ -113,29 +113,6 @@ class MainActivity : AppCompatActivity()
                 "${currentFrame.toSeconds() /*Time.toSeconds(progress)*/}\n${currentFrame}"
 
 
-        // play the view
-        var txOfAllMotions = 0f
-        var numberOfMotionsWithTx = 0
-        var tyOfAllMotions = 0f
-        var numberOfMotionsWithTy = 0
-
-//        for (motion in artwork.motions)
-//        {
-//            // TX - because single keyframes are not allowed
-//            if (motion.motionData.translateX.playbackFrames.count() > 0)
-//            {
-//                numberOfMotionsWithTx += 1
-//                txOfAllMotions += motion.motionData.translateX.playbackFrames[currentFrame]
-//            }
-//
-//            // TX - because single keyframes are not allowed
-//            if (motion.motionData.translateY.playbackFrames.count() > 0)
-//            {
-//                numberOfMotionsWithTy += 1
-//                tyOfAllMotions += motion.motionData.translateY.playbackFrames[currentFrame]
-//            }
-//        }
-
         for (polygon in artwork.polygons)
         {
             playbackPolygon(polygon)
@@ -146,8 +123,6 @@ class MainActivity : AppCompatActivity()
     {
         polygon.aggregatedMotion?.let {
 
-//            Log.d("Tag", "${it.motionData.fillColor.playbackFrames[currentFrame]}")
-
             if (it.motionData.fillColor.keyframes.count() > 1)
             polygon.polyData.fillColor =
                     it.motionData.fillColor.playbackFrames[currentFrame].toArgb()
@@ -155,23 +130,18 @@ class MainActivity : AppCompatActivity()
             if (it.motionData.strokeColor.keyframes.count() > 1)
             polygon.polyData.strokeColor =
                     it.motionData.strokeColor.playbackFrames[currentFrame].toArgb()
-//
+
             if (it.motionData.strokeWidth.keyframes.count() > 1)
             polygon.polyData.strokeWidth =
                     it.motionData.strokeWidth.playbackFrames[currentFrame]
 
-            Log.d("Tag", "at ${currentFrame} Width is: ${it.motionData.strokeWidth.playbackFrames[currentFrame]}")
-
+//            Log.d("Tag", "at ${currentFrame} Width is: ${it.motionData.strokeWidth.playbackFrames[currentFrame]}")
 
             if (it.motionData.pathData.keyframes.count() > 1)
             polygon.polyData.pathData =
                     it.motionData.pathData.playbackFrames[currentFrame]
         }
     }
-
-
-
-
 
     private fun setupSeekbar()
     {
@@ -181,11 +151,6 @@ class MainActivity : AppCompatActivity()
 
     fun seekBarListener(): SeekBar.OnSeekBarChangeListener
     {
-//        timeTextView.text = "${ /*Time.toSeconds(timeSeekbar.progress)*/ timeSeekbar.progress.toSeconds()}\n${timeSeekbar.progress}"
-        timeTextView.text = "${timeSeekbar.progress.toSeconds()}"
-
-
-
         return object : SeekBar.OnSeekBarChangeListener
         {
             override fun onProgressChanged(seekBar: SeekBar,
@@ -193,12 +158,7 @@ class MainActivity : AppCompatActivity()
                                            b: Boolean)
             {
                 currentFrame = progress
-
-//                currentFrame = progress
                 playbackAll()
-
-
-
             }
 
             override fun onStartTrackingTouch(seekBar: SeekBar)

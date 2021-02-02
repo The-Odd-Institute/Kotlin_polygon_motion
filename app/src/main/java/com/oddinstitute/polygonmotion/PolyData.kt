@@ -15,7 +15,6 @@ class PolyData
 
 
     // should these three be private?
-
     var strokeLineCap : Paint.Cap = Paint.Cap.ROUND
     var fillType = Path.FillType.EVEN_ODD
     var closed = true
