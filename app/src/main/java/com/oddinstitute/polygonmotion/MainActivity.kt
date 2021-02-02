@@ -50,7 +50,7 @@ class MainActivity : AppCompatActivity()
         artwork.polygons.add(trianglePolygon)
 //
 ////         this is temp
-        temp_MakeTriangleShapeMotion ()
+//        temp_MakeTriangleShapeMotion ()
 
 
         drawView = DrawView(this,
@@ -81,10 +81,10 @@ class MainActivity : AppCompatActivity()
                     val motionScale : Float = motionScaleEditText.text.toString().toFloat()
 
 //                    motion.motionData.fillColor.scaleFromRight(scaleRatio, duration.toFrames(), motionOffset)
-                    motion.motionData.fillColor.scaleFromLeft(scaleRatio, duration.toFrames(), motionOffset)
+//                    motion.motionData.fillColor.scaleFromLeft(scaleRatio, duration.toFrames())
 //                    motion.motionData.fillColor.scaleFromBothLeftAndRight(scaleRatio, duration.toFrames(), motionOffset)
 
-                    squarePolygon.makePolygonPlayableMotion(duration.toFrames())
+//                    squarePolygon.makePolygonPlayableMotion(duration.toFrames())
 
                 }
             }
@@ -144,25 +144,26 @@ class MainActivity : AppCompatActivity()
 
     fun playbackPolygon (polygon: Polygon)
     {
-        polygon.playableMotion?.let {
+        polygon.aggregatedMotion?.let {
 
 //            Log.d("Tag", "${it.motionData.fillColor.playbackFrames[currentFrame]}")
 
-            if (it.motionData.fillColor.animated)
+            if (it.motionData.fillColor.keyframes.count() > 1)
             polygon.polyData.fillColor =
                     it.motionData.fillColor.playbackFrames[currentFrame].toArgb()
 
-            if (it.motionData.strokeColor.animated)
+            if (it.motionData.strokeColor.keyframes.count() > 1)
             polygon.polyData.strokeColor =
                     it.motionData.strokeColor.playbackFrames[currentFrame].toArgb()
 //
-            if (it.motionData.strokeWidth.animated)
+            if (it.motionData.strokeWidth.keyframes.count() > 1)
             polygon.polyData.strokeWidth =
                     it.motionData.strokeWidth.playbackFrames[currentFrame]
 
+            Log.d("Tag", "at ${currentFrame} Width is: ${it.motionData.strokeWidth.playbackFrames[currentFrame]}")
 
 
-            if (it.motionData.pathData.animated)
+            if (it.motionData.pathData.keyframes.count() > 1)
             polygon.polyData.pathData =
                     it.motionData.pathData.playbackFrames[currentFrame]
         }
@@ -197,10 +198,7 @@ class MainActivity : AppCompatActivity()
                 playbackAll()
 
 
-                for (point in trianglePolygon.polyData.pathData)
-                {
-                    Log.d("Tag", "Point is ${point}")
-                }
+
             }
 
             override fun onStartTrackingTouch(seekBar: SeekBar)

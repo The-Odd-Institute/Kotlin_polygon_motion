@@ -54,9 +54,8 @@ class MotionData
     {
         for (channel in channels)
         {
-            if (channel.animated)
-                channel.makePlaybackFrames(length,
-                                           motionOffset)
+            if (channel.keyframes.count() > 1)
+                channel.makePlaybackFrames(length)
         }
     }
 

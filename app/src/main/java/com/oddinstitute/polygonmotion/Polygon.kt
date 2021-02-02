@@ -15,7 +15,9 @@ class Polygon
     var motions: ArrayList<Motion> = arrayListOf()
 
     // this is the playable motion that is aggregated for playback time
-    var playableMotion: Motion? = null
+    var old_playableMotion: Motion? = null
+
+    var aggregatedMotion: Motion? = null
 
 
     var numberOfMotionsWithFillColor = 0
@@ -37,127 +39,135 @@ class Polygon
     var collectedShape: MutableList<PointF> = mutableListOf()
 
 
-    fun makePolygonPlayableMotion(duration: Int)
+    fun aggregateMotions (duration: Int)
     {
-        val playableMotionData = MotionData()
+        val aggregatedMotionData = MotionData ()
+        // fill color, Stroke color, stroke width, shape
 
 
-        // fill all the frames, even those that are not going to be used
-        // we add one to the durations to make sure the last frame is also created
-        playableMotionData.fillColor.playbackFrames =
-                MutableList(duration + 1) { Color() }
-        playableMotionData.strokeColor.playbackFrames =
-                MutableList(duration + 1) { Color() }
-        playableMotionData.strokeWidth.playbackFrames =
-                MutableList(duration + 1) { 0f }
-
-        playableMotionData.pathData.playbackFrames =
-                MutableList(duration + 1) { arrayListOf() }
-
-        // we should fill the duration including last frame
-        for (i in 0..duration)
+        for (motion in motions)
         {
-            numberOfMotionsWithFillColor = 0
-            numberOfMotionsWithStrokeColor = 0
-            numberOfMotionsWithStrokeWidth = 0
-            numberOfMotionsWithShape = 0
-
-            collectedFillColorR = 0f
-            collectedFillColorG = 0f
-            collectedFillColorB = 0f
-            collectedFillColorA = 0f
-
-            collectedStrokeColorR = 0f
-            collectedStrokeColorG = 0f
-            collectedStrokeColorB = 0f
-            collectedStrokeColorA = 0f
-
-            collectedStrokeWidth = 0f
-
-            collectedShape =
-                    MutableList(polyData.pathData.count()) {
-                        PointF(0f,
-                               0f)
-                    }
-
-
-
-
-
-
-            for (motion in motions)
-            {
-                for (channel in motion.motionData.channels)
-                {
-                    // if channel not animated, go to the next channel
-                    if (!channel.animated)
-                        continue
-
-                    when (channel.name)
-                    {
-                        // here, we know the channel is animated
-                        ChannelName.FillColor ->
-                        {
-                            playableMotionData.fillColor.animated = true
-
-
-                            collectFillColor(channel as Channel<Color>,
-                                             i)
-                        }
-                        ChannelName.StrokeColor ->
-                        {
-                            playableMotionData.strokeColor.animated = true
-
-                            collectStrokeColor(channel as Channel<Color>,
-                                               i)
-                        }
-                        ChannelName.StrokeWidth ->
-                        {
-                            playableMotionData.strokeWidth.animated = true
-
-
-                            collectStrokeWidth(channel as Channel<Float>,
-                                               i)
-                        }
-                        ChannelName.Shape ->
-                        {
-                            playableMotionData.pathData.animated = true
-
-                            collectShape(channel as Channel<ArrayList<PointF>>,
-                                         i)
-                        }
-                    }
-                }
-            }
-
-            // until now, the values of all the channels in THIS very frame has been collected
-            // so let's make the actual playable motion
-
-
-//            Log.d("Tag", "colors are: ${aggregateFillColor().red()}\n${aggregateFillColor().green()}\n${aggregateFillColor().blue()}\n${aggregateFillColor().alpha()}")
-
-            // we should only aggregate if that channel is animated
-            if (playableMotionData.fillColor.animated)
-                playableMotionData.fillColor.playbackFrames[i] = aggregateFillColor()
-
-            if (playableMotionData.strokeColor.animated)
-                playableMotionData.strokeColor.playbackFrames[i] = aggregateStrokeColor()
-
-            if (playableMotionData.strokeWidth.animated)
-                playableMotionData.strokeWidth.playbackFrames[i] = aggregateStrokeWidth()
-
-            if (playableMotionData.pathData.animated)
-                playableMotionData.pathData.playbackFrames[i] = aggregateShape()
+            aggregatedMotionData.strokeWidth += motion.motionData.strokeWidth
         }
 
-        val playableMotion = Motion(java.util.UUID.randomUUID()
-                                            .toString(),
-                                    playableMotionData)
+        // now all stroke widths are in the same channel
 
-        // this entirely replaces the playablemotion
-        // for that, we don't need to worry about having set a channel's animated TRUE
-        // if it now isn't anymore
-        this.playableMotion = playableMotion
+
+        aggregatedMotionData.makePlaybackFrames(duration)
+
+        aggregatedMotion = Motion(java.util.UUID.randomUUID().toString(),
+                                  aggregatedMotionData)
+    }
+
+
+
+    fun old_makePolygonPlayableMotion(duration: Int)
+    {
+//        val playableMotionData = MotionData()
+//
+//
+//        // fill all the frames, even those that are not going to be used
+//        // we add one to the durations to make sure the last frame is also created
+//        playableMotionData.fillColor.playbackFrames =
+//                MutableList(duration + 1) { Color() }
+//        playableMotionData.strokeColor.playbackFrames =
+//                MutableList(duration + 1) { Color() }
+//        playableMotionData.strokeWidth.playbackFrames =
+//                MutableList(duration + 1) { 0f }
+//
+//        playableMotionData.pathData.playbackFrames =
+//                MutableList(duration + 1) { arrayListOf() }
+//
+//        // we should fill the duration including last frame
+//        for (i in 0..duration)
+//        {
+//            numberOfMotionsWithFillColor = 0
+//            numberOfMotionsWithStrokeColor = 0
+//            numberOfMotionsWithStrokeWidth = 0
+//            numberOfMotionsWithShape = 0
+//
+//            collectedFillColorR = 0f
+//            collectedFillColorG = 0f
+//            collectedFillColorB = 0f
+//            collectedFillColorA = 0f
+//
+//            collectedStrokeColorR = 0f
+//            collectedStrokeColorG = 0f
+//            collectedStrokeColorB = 0f
+//            collectedStrokeColorA = 0f
+//
+//            collectedStrokeWidth = 0f
+//
+//            collectedShape =
+//                    MutableList(polyData.pathData.count()) {
+//                        PointF(0f,
+//                               0f)
+//                    }
+//
+//
+//
+//
+//
+//
+//            for (motion in motions)
+//            {
+//                for (channel in motion.motionData.channels)
+//                {
+//                    // if channel not animated, go to the next channel
+//                    if (channel.keyframes.count() < 2)
+//                        continue
+//
+//                    when (channel.name)
+//                    {
+//                        // here, we know the channel is animated
+//                        ChannelName.FillColor ->
+//                        {
+//                            collectFillColor(channel as Channel<Color>, i)
+//                        }
+//                        ChannelName.StrokeColor ->
+//                        {
+//                            collectStrokeColor(channel as Channel<Color>, i)
+//                        }
+//                        ChannelName.StrokeWidth ->
+//                        {
+//                            collectStrokeWidth(channel as Channel<Float>, i)
+//                        }
+//                        ChannelName.Shape ->
+//                        {
+//                            collectShape(channel as Channel<ArrayList<PointF>>, i)
+//                        }
+//                    }
+//                }
+//            }
+//
+//            // until now, the values of all the channels in THIS very frame has been collected
+//            // so let's make the actual playable motion
+//
+//
+////            Log.d("Tag", "colors are: ${aggregateFillColor().red()}\n${aggregateFillColor().green()}\n${aggregateFillColor().blue()}\n${aggregateFillColor().alpha()}")
+//
+//            // we should only aggregate if that channel is animated
+//            if (playableMotionData.fillColor.keyframes.count() > 1)
+//                playableMotionData.fillColor.playbackFrames[i] = aggregateFillColor()
+//
+//            if (playableMotionData.strokeColor.keyframes.count() > 1)
+//                playableMotionData.strokeColor.playbackFrames[i] = aggregateStrokeColor()
+//
+//            if (playableMotionData.strokeWidth.keyframes.count() > 1)
+//                playableMotionData.strokeWidth.playbackFrames[i] = aggregateStrokeWidth()
+//
+//            if (playableMotionData.pathData.keyframes.count() > 1)
+//                playableMotionData.pathData.playbackFrames[i] = aggregateShape()
+//        }
+//
+//        val playableMotion = Motion(java.util.UUID.randomUUID()
+//                                            .toString(),
+//                                    playableMotionData)
+//
+//        // this entirely replaces the playablemotion
+//        // for that, we don't need to worry about having set a channel's animated TRUE
+//        // if it now isn't anymore
+//        this.old_playableMotion = playableMotion
 
     }
 
@@ -259,18 +269,24 @@ class Polygon
 
     fun addMotion(motion: Motion, duration: Int)
     {
-        motion.motionData.makePlaybackFrames(duration)
+        // instead of making playback frames
+        // each time a motion is added
+        // we should aggregate channels
+        // then make the playback frames for each channel
+//        motion.motionData.makePlaybackFrames(duration)
         motions.add(motion)
 
+        aggregateMotions (duration)
 
         // each time a motion is added, adjusted or removed, we should re-create all of these
-        makePolygonPlayableMotion(duration)
+//        makePolygonPlayableMotion(duration)
     }
 
     fun removeMotion(duration: Int)
     {
         // each time a motion is added, adjusted or removed, we should re-create all of these
-        makePolygonPlayableMotion(duration)
+        // makePolygonPlayableMotion(duration)
+        aggregateMotions (duration)
     }
 
     fun clearPath()

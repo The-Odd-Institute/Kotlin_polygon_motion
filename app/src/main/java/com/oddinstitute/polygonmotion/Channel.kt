@@ -7,21 +7,49 @@ import android.util.Log
 import kotlin.math.roundToInt
 
 
+//operator fun ArrayList<PointF>.minus (other: ArrayList<PointF>): ArrayList<PointF> = run {
+//    val res: ArrayList<PointF> = arrayListOf()
+//
+//    for (i in 0 until this.count())
+//    {
+//        val diffPointX = this[i].x - other[i].x
+//        val diffPointY = this[i].y - other[i].y
+//        res.add(PointF(diffPointX, diffPointY))
+//    }
+//
+//    return res
+//}
+
+operator fun Channel<Float>.plusAssign (other: Channel<Float>) = run {
+
+    for (keyframe in other.keyframes)
+    {
+        var value = keyframe.value
+        var frame = keyframe.frame
+        for (i in 0 until this.keyframes.count())
+        {
+            if (this.keyframes[i].frame == frame)
+            {
+                // if it exists, average the value and remove
+                value = (value + this.keyframes[i].value) / 2
+                this.keyframes.removeAt(i)
+                break
+            }
+        }
+
+        val adjustedKeyframe = Keyframe<Float>(frame, value)
+        this.keyframes.add(adjustedKeyframe)
+    }
+}
+
+
+
+
 // T can be float, color, or an array
 class Channel<T>(var name: ChannelName, var type: T)
 {
-    var channelOffset: Int = 0
-    var channelTimeScale = 1.0f // this can never be negative
-    var channelValueScale = 1.0f // this can never be negative
-
-    //    var actualKeyframes: ArrayList<Keyframe<T>> = arrayListOf()
     var keyframes: ArrayList<Keyframe<T>> = arrayListOf()
-
-    //    var displayKeyframes: ArrayList<Keyframe<T>> = arrayListOf()
     var playbackFrames: MutableList<T> = mutableListOf()
-
-    var animated = false
-
 
     fun addKeyframe(keyframe: Keyframe<T>)
     {
@@ -37,18 +65,12 @@ class Channel<T>(var name: ChannelName, var type: T)
 
         keyframes.add(keyframe)
         sortIt()
-
-        if (keyframes.count() > 0)
-            animated = true
     }
 
     fun removeKeyframe()
     {
         // some
 
-
-        // this is instead of an if statement
-        animated = keyframes.count() > 0
     }
 
     fun sortIt()
@@ -60,9 +82,6 @@ class Channel<T>(var name: ChannelName, var type: T)
         {
             keyframes.add(keyframe)
         }
-
-        if (keyframes.count() > 0)
-            animated = true
     }
 
     fun old_makeDisplayKeyframe(motionOffset: Int)
@@ -115,8 +134,7 @@ class Channel<T>(var name: ChannelName, var type: T)
 //        }
     }
 
-
-    fun old_makePlaybackFrames(length: Int, motionOffset: Int)
+    fun old_makePlaybackFrames(length: Int)
     {
         // this entire method has to be reviewed
         // it currently doesn't account for matters such as ease in ease out
@@ -339,7 +357,7 @@ class Channel<T>(var name: ChannelName, var type: T)
         }
     }
 
-    fun makePlaybackFrames(length: Int, motionOffset: Int)
+    fun makePlaybackFrames(length: Int)
     {
         // this entire method has to be reviewed
         // it currently doesn't account for matters such as ease in ease out
@@ -484,7 +502,7 @@ class Channel<T>(var name: ChannelName, var type: T)
         }
     }
 
-    fun scaleFromRight(ratio: Float, length: Int, motionOffset: Int)
+    fun scaleFromRight(ratio: Float, length: Int)
     {
         // left corner is pivot
         var utmostLeftFrame = 100_000
@@ -507,7 +525,7 @@ class Channel<T>(var name: ChannelName, var type: T)
         {
             val currentFrame = keyframe.frame
             val newFrame =
-                    ((currentFrame - utmostLeftFrame) * ratio).roundToInt() + utmostLeftFrame + channelOffset + motionOffset
+                    ((currentFrame - utmostLeftFrame) * ratio).roundToInt() + utmostLeftFrame
             val adjustedKeyframe =
                     Keyframe<T>(newFrame,
                                 keyframe.value)
@@ -515,12 +533,10 @@ class Channel<T>(var name: ChannelName, var type: T)
         }
 
         keyframes = temp
-        makePlaybackFrames(length,
-                           motionOffset)
+        makePlaybackFrames(length)
     }
 
-
-    fun scaleFromLeft(ratio: Float, length: Int, motionOffset: Int)
+    fun scaleFromLeft(ratio: Float, length: Int)
     {
         // right corner is pivot
         var utmostRightFrame = -100_000
@@ -543,7 +559,7 @@ class Channel<T>(var name: ChannelName, var type: T)
         {
             val currentFrame = keyframe.frame
             val newFrame =
-                    ((currentFrame - utmostRightFrame) * ratio).roundToInt() + utmostRightFrame + channelOffset + motionOffset
+                    ((currentFrame - utmostRightFrame) * ratio).roundToInt() + utmostRightFrame
             val adjustedKeyframe =
                     Keyframe<T>(newFrame,
                                 keyframe.value)
@@ -551,12 +567,10 @@ class Channel<T>(var name: ChannelName, var type: T)
         }
 
         keyframes = temp
-        makePlaybackFrames(length,
-                           motionOffset)
+        makePlaybackFrames(length)
     }
 
-
-    fun scaleFromBothLeftAndRight(ratio: Float, length: Int, motionOffset: Int)
+    fun scaleFromBothLeftAndRight(ratio: Float, length: Int)
     {
         // middle is pivot
         var utmostRightFrame = -100_000
@@ -590,7 +604,7 @@ class Channel<T>(var name: ChannelName, var type: T)
         {
             val currentFrame = keyframe.frame
             val newFrame =
-                    ((currentFrame - midFrame) * ratio).roundToInt() + midFrame + channelOffset + motionOffset
+                    ((currentFrame - midFrame) * ratio).roundToInt() + midFrame
             val adjustedKeyframe =
                     Keyframe<T>(newFrame,
                                 keyframe.value)
@@ -598,7 +612,6 @@ class Channel<T>(var name: ChannelName, var type: T)
         }
 
         keyframes = temp
-        makePlaybackFrames(length,
-                           motionOffset)
+        makePlaybackFrames(length)
     }
 }
