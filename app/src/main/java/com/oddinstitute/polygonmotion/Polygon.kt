@@ -24,6 +24,7 @@ class Polygon
 
         for (motion in motions)
         {
+
             aggregatedMotionData.strokeWidth.merge(motion.motionData.strokeWidth)
             aggregatedMotionData.fillColor.merge(motion.motionData.fillColor)
             aggregatedMotionData.strokeColor.merge(motion.motionData.strokeColor)

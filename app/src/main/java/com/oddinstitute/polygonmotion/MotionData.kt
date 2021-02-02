@@ -49,12 +49,6 @@ class MotionData
     {
         for (channel in channels)
         {
-//            Log.d("Tag", "Round")
-//            for (keyframe in channel.keyframes)
-//            {
-//                Log.d("Tag", "at ${keyframe.frame} color is -> ${keyframe.value}")
-//            }
-
             if (channel.keyframes.count() > 1)
                 channel.makePlaybackFrames(length)
         }
