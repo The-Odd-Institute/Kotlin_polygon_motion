@@ -1,10 +1,8 @@
 package com.oddinstitute.polygonmotion
 
 import android.graphics.Color
-import android.graphics.Point
 import android.graphics.PointF
 import android.util.Log
-import androidx.constraintlayout.motion.widget.KeyFrames
 import kotlin.math.roundToInt
 
 
@@ -12,7 +10,7 @@ import kotlin.math.roundToInt
 class Channel<T>(var name: ChannelName, var type: T)
 {
     var keyframes: ArrayList<Keyframe<T>> = arrayListOf()
-    var playbackFrames: MutableList<T> = mutableListOf()
+    var playbackFrames: MutableList<T>? = null
 
     fun addKeyframe(keyframe: Keyframe<T>)
     {
@@ -27,9 +25,8 @@ class Channel<T>(var name: ChannelName, var type: T)
         }
 
         keyframes.add(keyframe)
-        sortIt()
+        sortKeyframes()
     }
-
 
     fun removeKeyframe()
     {
@@ -37,7 +34,7 @@ class Channel<T>(var name: ChannelName, var type: T)
 
     }
 
-    fun sortIt()
+    fun sortKeyframes()
     {
         val sorted = keyframes.sortedWith(compareBy
                                           { it.frame })
@@ -48,15 +45,27 @@ class Channel<T>(var name: ChannelName, var type: T)
         }
     }
 
-
     fun makePlaybackFrames(length: Int)
     {
         // this entire method has to be reviewed
         // it currently doesn't account for matters such as ease in ease out
-        playbackFrames.clear()
+        playbackFrames?.let { it.clear() }
+
+
+
+        // very important, we should only allocate the playbackFrames
+        // if the keyframes are there
+        // otherwise, it should become null
+        // because at play time, we rly on this to decide whther there are keyframes or not.
 
         if (this.keyframes.count() < 2)
+        {
+            playbackFrames = null
             return
+        }
+        playbackFrames = mutableListOf()
+
+
 
         // find utmost left keyframe
         var utmostLeftFrame = 100_000
@@ -160,30 +169,39 @@ class Channel<T>(var name: ChannelName, var type: T)
         // fill the frames
         for (i in 0..length)
         {
-            // we add type instead of adding float, color and array seperately
-            playbackFrames.add(type)
+            // we add type instead of adding float, color and array separately
+                playbackFrames?.let {
+                    it.add(type)
+                }
+
         }
 
         for (i in 0..length)
         {
             if (i < utmostLeftFrame)
             {
-                playbackFrames[i] = firstShiftedKeyframe.value
+                playbackFrames?.let {
+                    it[i] = firstShiftedKeyframe.value
+                }
             }
             else if (i >= lastKeyframe.frame)
             {
-                playbackFrames[i] = lastKeyframe.value
+                playbackFrames?.let {
+                    it[i] = lastKeyframe.value
+                }
             }
             else
             {
                 // 20
                 if (i in 0..length)
-                    playbackFrames[i] = shiftedPlaybackFrames[i - utmostLeftFrame]
+                    playbackFrames?.let {
+                        it[i] = shiftedPlaybackFrames[i - utmostLeftFrame]
+                    }
             }
         }
     }
 
-    fun scaleFromRight(ratio: Float, length: Int)
+    fun scaleChannelFromRight(ratio: Float, length: Int)
     {
         // left corner is pivot
         var utmostLeftFrame = 100_000
@@ -198,7 +216,11 @@ class Channel<T>(var name: ChannelName, var type: T)
                 utmostLeftFrame = keyframe.frame
         }
 
+        scaleKeyframesFromRightBy (ratio, length, utmostLeftFrame)
+    }
 
+    fun scaleKeyframesFromRightBy(ratio: Float, length: Int, leftFrame: Int)
+    {
         var temp: ArrayList<Keyframe<T>> = arrayListOf()
 
         // let's shift everyone
@@ -206,7 +228,7 @@ class Channel<T>(var name: ChannelName, var type: T)
         {
             val currentFrame = keyframe.frame
             val newFrame =
-                    ((currentFrame - utmostLeftFrame) * ratio).roundToInt() + utmostLeftFrame
+                    ((currentFrame - leftFrame) * ratio).roundToInt() + leftFrame
             val adjustedKeyframe =
                     Keyframe<T>(newFrame,
                                 keyframe.value)
@@ -214,10 +236,10 @@ class Channel<T>(var name: ChannelName, var type: T)
         }
 
         keyframes = temp
-        makePlaybackFrames(length)
+        // makePlaybackFrames(length)
     }
 
-    fun scaleFromLeft(ratio: Float, length: Int)
+    fun scaleChannelFromLeft(ratio: Float, length: Int)
     {
         // right corner is pivot
         var utmostRightFrame = -100_000
@@ -232,7 +254,12 @@ class Channel<T>(var name: ChannelName, var type: T)
                 utmostRightFrame = keyframe.frame
         }
 
-
+        scaleKeyframesFromLeftBy(ratio,
+                                 length,
+                                 utmostRightFrame)
+    }
+    fun scaleKeyframesFromLeftBy (ratio: Float, length: Int, rightFrame: Int)
+    {
         var temp: ArrayList<Keyframe<T>> = arrayListOf()
 
         // let's shift everyone
@@ -240,7 +267,7 @@ class Channel<T>(var name: ChannelName, var type: T)
         {
             val currentFrame = keyframe.frame
             val newFrame =
-                    ((currentFrame - utmostRightFrame) * ratio).roundToInt() + utmostRightFrame
+                    ((currentFrame - rightFrame) * ratio).roundToInt() + rightFrame
             val adjustedKeyframe =
                     Keyframe<T>(newFrame,
                                 keyframe.value)
@@ -248,7 +275,7 @@ class Channel<T>(var name: ChannelName, var type: T)
         }
 
         keyframes = temp
-        makePlaybackFrames(length)
+       // makePlaybackFrames(length)
     }
 
     fun scaleFromBothLeftAndRight(ratio: Float, length: Int)
@@ -265,19 +292,26 @@ class Channel<T>(var name: ChannelName, var type: T)
         {
             if (keyframe.frame > utmostRightFrame)
                 utmostRightFrame = keyframe.frame
-        }
 
-        // let's find the utmost left frame
-        for (keyframe in keyframes)
-        {
+
+            // let's find the utmost left frame
             if (keyframe.frame < utmostLeftFrame)
                 utmostLeftFrame = keyframe.frame
         }
 
+
+
         // 20 , 50
         val midFrame = (utmostRightFrame - utmostLeftFrame) / 2 + utmostLeftFrame
 
+        scaleKeyframesFromBothLeftAndRightBy(ratio,
+                                             length,
+                                             utmostRightFrame)
 
+    }
+
+    fun scaleKeyframesFromBothLeftAndRightBy(ratio: Float, length: Int, midFrame: Int)
+    {
         var temp: ArrayList<Keyframe<T>> = arrayListOf()
 
         // let's shift everyone
@@ -293,7 +327,7 @@ class Channel<T>(var name: ChannelName, var type: T)
         }
 
         keyframes = temp
-        makePlaybackFrames(length)
+        // makePlaybackFrames(length)
     }
 
     fun merge(other: Channel<T>)
@@ -368,6 +402,6 @@ class Channel<T>(var name: ChannelName, var type: T)
             }
         }
 
-        this.sortIt()
+        this.sortKeyframes()
     }
 }

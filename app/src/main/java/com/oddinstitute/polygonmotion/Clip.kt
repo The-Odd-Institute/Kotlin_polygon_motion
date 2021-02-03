@@ -74,7 +74,7 @@ class Clip
 
 
         mainClip = TextView(context)
-        mainClip.text = motion.motionData.name
+        mainClip.text = motion.name
         mainClip.gravity = Gravity.CENTER
         mainClip.setTextColor(Color.BLACK)
         mainClip.textSize = 14f
@@ -82,21 +82,21 @@ class Clip
 
 //        motion.motionData.calculateStartLength()
 
-        width = lengthToWidth(motion.motionData.clipLength)
+        width = lengthToWidth(motion.clipLength)
 
 
         val myParams =
                 RelativeLayout.LayoutParams(width,
                                             ViewGroup.LayoutParams.MATCH_PARENT)
 
-        marginLeft = lengthToWidth(motion.motionData.clipStart) + playableMarginToContainer
+        marginLeft = lengthToWidth(motion.clipStart) + playableMarginToContainer
 
         myParams.setMargins(marginLeft,
                             0,
                             0,
                             0)
         mainClip.layoutParams = myParams
-        mainClip.setBackgroundColor(motion.motionData.clipColor)
+        mainClip.setBackgroundColor(motion.clipColor)
         mainClip.setOnTouchListener(onTouchListener())
         containerLayout.addView(mainClip)
 
@@ -187,19 +187,19 @@ class Clip
         // scale changed
 
             // this is the scale of the clip
-            motion.motionData.scale = widthAtTouchUp.toFloat() / widthAtTouchDown.toFloat()
+            motion.scale = widthAtTouchUp.toFloat() / widthAtTouchDown.toFloat()
 
             val offset = xAtTouchUp - xAtTouchDown
             // this is the new start for the entirety f the clip
             // not what gets drawn
-            motion.motionData.motionOffset += widthToLength(offset)
+            motion.motionOffset += widthToLength(offset)
 
 
-            motion.motionData.resizeMotionDisplay()
+            motion.resizeMotionDisplay()
 
 
 
-        motion.motionData.makePlaybackFrames(playableFramesCount)
+        motion.makePlaybackFrames(playableFramesCount)
     }
 
 

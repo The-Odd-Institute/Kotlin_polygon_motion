@@ -1,13 +1,26 @@
 package com.oddinstitute.polygonmotion
 
 import android.graphics.Color
+import android.graphics.Paint
 import android.graphics.Path
 import android.graphics.PointF
 import android.util.Log
 
 class Polygon
 {
-    var polyData: PolyData = PolyData()
+    var pathData: ArrayList<PointF> = arrayListOf()
+    var strokeWidth = 0.0f
+
+    var fillColor = Color.BLACK
+    var strokeColor = Color.TRANSPARENT
+
+
+    // should these three be private?
+    var strokeLineCap : Paint.Cap = Paint.Cap.ROUND
+    var fillType = Path.FillType.EVEN_ODD
+    var closed = true
+
+//    var polyData: PolyData = PolyData()
     var path: Path = Path()
 
     // this is all the motions that have been added to a polygon
@@ -18,29 +31,29 @@ class Polygon
 
     fun aggregateMotions (duration: Int)
     {
-        val aggregatedMotionData = MotionData ()
+//        val aggregatedMotionData = MotionData ()
         // fill color, Stroke color, stroke width, shape
 
+        aggregatedMotion = Motion(java.util.UUID.randomUUID().toString())
 
-        for (motion in motions)
-        {
+        aggregatedMotion?.let {
+            for (motion in motions)
+            {
 
-            aggregatedMotionData.strokeWidth.merge(motion.motionData.strokeWidth)
-            aggregatedMotionData.fillColor.merge(motion.motionData.fillColor)
-            aggregatedMotionData.strokeColor.merge(motion.motionData.strokeColor)
-            aggregatedMotionData.pathData.merge(motion.motionData.pathData)
-        }
+                it.strokeWidth.merge(motion.strokeWidth)
+                it.fillColor.merge(motion.fillColor)
+                it.strokeColor.merge(motion.strokeColor)
+                it.pathData.merge(motion.pathData)
+            }
 //        Log.d("Tag", "Round")
 
 
-        // now all stroke widths are in the same channel
+            // now all stroke widths are in the same channel
 
 
-        aggregatedMotionData.makePlaybackFrames(duration)
+            it.makePlaybackFrames(duration)
 //
-        aggregatedMotion = Motion(java.util.UUID.randomUUID().toString(),
-                                  aggregatedMotionData)
-
+        }
     }
 
     fun addMotion(motion: Motion, duration: Int)

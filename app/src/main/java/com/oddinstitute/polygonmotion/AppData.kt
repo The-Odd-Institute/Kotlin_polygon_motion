@@ -11,9 +11,9 @@ class AppData
     companion object
     {
         // this is all temp
-        fun square() : PolyData
+        fun square() : Polygon
         {
-            var poly: PolyData = PolyData()
+            var poly: Polygon = Polygon()
             val point1 =
                     PointF(100f,
                            100f)
@@ -42,9 +42,9 @@ class AppData
             return poly
         }
 
-        fun triangle() : PolyData
+        fun triangle() : Polygon
         {
-            var poly: PolyData = PolyData()
+            var poly: Polygon = Polygon()
             val point1 =
                     PointF(250f,
                            220f)
@@ -68,7 +68,5 @@ class AppData
 
             return poly
         }
-
-
     }
 }

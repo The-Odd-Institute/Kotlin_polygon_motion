@@ -28,17 +28,17 @@ class DrawView : View
 
 
 
-    fun makePathFor(data: PolyData): Path
+    fun makePathFor(polygon: Polygon): Path
     {
         // Here, draw the MAIN Path
         var path = Path()
         path.fillType = Path.FillType.EVEN_ODD
 
-        path.moveToPoint(data.pathData[0])
+        path.moveToPoint(polygon.pathData[0])
 
-        for (i in 0 until data.pathData.count())
+        for (i in 0 until polygon.pathData.count())
         {
-            path.lineToPoint(data.pathData[i])
+            path.lineToPoint(polygon.pathData[i])
         }
 
 
@@ -64,7 +64,7 @@ class DrawView : View
             for (i in 0 until artwork.polygons.count())
             {
                 val polygon = artwork.polygons[i]
-                val path = makePathFor(polygon.polyData)
+                val path = makePathFor(polygon)
                 polygon.path = path
                 artwork.polygons[i] = polygon
             }
@@ -77,15 +77,15 @@ class DrawView : View
     {
         for (artwork in artworks)
         {
-            for (each in artwork.polygons)
+            for (polygon in artwork.polygons)
             {
-                val path = each.path
-                val data = each.polyData
-                styleFillPaint(data)
+                val path = polygon.path
+//                val data = each.polyData
+                styleFillPaint(polygon)
                 canvas.drawPath(path,
                                 mainPaint)
 
-                styleBorderPaint(data)
+                styleBorderPaint(polygon)
                 canvas.drawPath(path,
                                 mainPaint)
             }
@@ -105,21 +105,21 @@ class DrawView : View
     }
 
 
-    fun styleBorderPaint(polyData: PolyData)
+    fun styleBorderPaint(polygon: Polygon)
     {
         // stroke
         mainPaint.style = Paint.Style.STROKE
-        mainPaint.strokeWidth = polyData.strokeWidth
-        mainPaint.color = polyData.strokeColor
-        mainPaint.strokeCap = polyData.strokeLineCap
+        mainPaint.strokeWidth = polygon.strokeWidth
+        mainPaint.color = polygon.strokeColor
+        mainPaint.strokeCap = polygon.strokeLineCap
     }
 
 
-    fun styleFillPaint(polyData: PolyData)
+    fun styleFillPaint(polygon: Polygon)
     {
         // fill
         mainPaint.style = Paint.Style.FILL
-        mainPaint.color = polyData.fillColor
+        mainPaint.color = polygon.fillColor
     }
 }
 
