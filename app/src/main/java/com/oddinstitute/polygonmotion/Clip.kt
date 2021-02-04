@@ -187,7 +187,7 @@ class Clip
         // scale changed
 
             // this is the scale of the clip
-            motion.scale = widthAtTouchUp.toFloat() / widthAtTouchDown.toFloat()
+            motion.clipScale = widthAtTouchUp.toFloat() / widthAtTouchDown.toFloat()
 
             val offset = xAtTouchUp - xAtTouchDown
             // this is the new start for the entirety f the clip

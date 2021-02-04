@@ -5,17 +5,17 @@ import android.graphics.PointF
 import android.util.Log
 
 
-// T can be float, Color, or array
+// T can be float, Color, PointF, or ArrayList<PointF>
 class Keyframe<T> (var frame: Int, var value: T)
 {
     override fun toString(): String
     {
-        if (value is Int)
+        if (value is Color)
         {
-            val r = Color.red(value as Int).toFloatColor()
-            val g = Color.red(value as Int).toFloatColor()
-            val b = Color.red(value as Int).toFloatColor()
-            val a = Color.alpha(value as Int).toFloatColor()
+            val r = (value as Color).red().toString()
+            val g = (value as Color).green().toString()
+            val b = (value as Color).blue().toString()
+            val a = (value as Color).alpha().toString()
 
             return "frame: $frame -> $value"
         }

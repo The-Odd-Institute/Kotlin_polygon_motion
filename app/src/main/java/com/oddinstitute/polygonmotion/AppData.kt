@@ -6,9 +6,11 @@ import android.graphics.Path
 import android.graphics.PointF
 
 
+
+
 class AppData
 {
-    companion object
+    companion object Stuff
     {
         // this is all temp
         fun square() : Polygon

@@ -1,8 +1,11 @@
 package com.oddinstitute.polygonmotion
 
 import android.graphics.Color
+import android.graphics.Point
 import android.graphics.PointF
 import android.util.Log
+import androidx.core.graphics.minus
+import androidx.core.graphics.plus
 import kotlin.math.roundToInt
 
 
@@ -28,10 +31,12 @@ class Channel<T>(var name: ChannelName, var type: T)
         sortKeyframes()
     }
 
-    fun removeKeyframe()
+    fun addKeyframes(keyframes: List<Keyframe<T>>)
     {
-        // some
-
+        for (keyframe in keyframes)
+        {
+            addKeyframe(keyframe)
+        }
     }
 
     fun sortKeyframes()
@@ -52,7 +57,6 @@ class Channel<T>(var name: ChannelName, var type: T)
         playbackFrames?.let { it.clear() }
 
 
-
         // very important, we should only allocate the playbackFrames
         // if the keyframes are there
         // otherwise, it should become null
@@ -66,9 +70,8 @@ class Channel<T>(var name: ChannelName, var type: T)
         playbackFrames = mutableListOf()
 
 
-
         // find utmost left keyframe
-        var utmostLeftFrame = 100_000
+        var utmostLeftFrame: Int = MaxPositive
 
         // let's find the utmost left frame
         for (keyframe in keyframes)
@@ -114,53 +117,73 @@ class Channel<T>(var name: ChannelName, var type: T)
             val nextFrame = nextKeyframe.frame
             val diffFrame = nextFrame - curFrame
 
-            if (type is Float)
+            when (type)
             {
-                val curValue = curKeyframe.value as Float
-                val nextValue = nextKeyframe.value as Float
-                val diffValue: Float = nextValue - curValue
-                val increment = diffValue / diffFrame.toFloat()
-
-                // from current frame to next including next
-                // these will be re-written, but the last keyframe will have its value
-                for (frameIndex in curFrame..nextFrame)
+                is Float ->
                 {
-                    val newValue: Float = curValue + increment * (frameIndex - curFrame)
-                    shiftedPlaybackFrames[frameIndex] = newValue as T
+                    val curValue = curKeyframe.value as Float
+                    val nextValue = nextKeyframe.value as Float
+                    val diffValue: Float = nextValue - curValue
+                    val increment = diffValue / diffFrame.toFloat()
+
+                    // from current frame to next including next
+                    // these will be re-written, but the last keyframe will have its value
+                    for (frameIndex in curFrame..nextFrame)
+                    {
+                        val newValue: Float = curValue + increment * (frameIndex - curFrame)
+                        shiftedPlaybackFrames[frameIndex] = newValue as T
+                    }
                 }
-            }
-            else if (type is Color)
-            {
-                val curValue = curKeyframe.value as Color
-                val nextValue = nextKeyframe.value as Color
-                val diffValue: MyColor = MyColor(nextValue) - MyColor(curValue)
-                val increment: MyColor = diffValue / diffFrame
-
-                for (frameIndex in curFrame..nextFrame)
+                is Color ->
                 {
-                    val newVal: MyColor = MyColor(curValue) + increment * (frameIndex - curFrame)
-                    shiftedPlaybackFrames[frameIndex] = newVal.color() as T
+                    val curValue = curKeyframe.value as Color
+                    val nextValue = nextKeyframe.value as Color
+                    val diffValue: MyColor = MyColor(nextValue) - MyColor(curValue)
+                    val increment: MyColor = diffValue / diffFrame
+
+                    for (frameIndex in curFrame..nextFrame)
+                    {
+                        val newVal: MyColor =
+                                MyColor(curValue) + increment * (frameIndex - curFrame)
+                        shiftedPlaybackFrames[frameIndex] = newVal.color() as T
+                    }
                 }
-            }
-            else // arraylist
-            {
-                val curValue = curKeyframe.value as ArrayList<PointF>
-                // here, we have a bunch of points at places
-                val nextValue = nextKeyframe.value as ArrayList<PointF>
-
-                // here, those are at different places
-                // between these two locations, each point has a difference and an increment
-
-                val diffValue: ArrayList<PointF> = nextValue - curValue
-                val increment = diffValue / diffFrame
-
-                for (frameIndex in curFrame..nextFrame)
+                is PointF ->
                 {
-                    // each point should get its increment, go to the array
-                    // the array should then go to the playback frames
-                    val newVal: ArrayList<PointF> = curValue + (increment * (frameIndex - curFrame))
-                    shiftedPlaybackFrames[frameIndex] = newVal as T
+                    val curValue = curKeyframe.value as PointF
+                    val nextValue = nextKeyframe.value as PointF
+                    val diffValue: PointF = nextValue.minus(curValue)
+                    val increment: PointF = diffValue / diffFrame
 
+
+                    for (frameIndex in curFrame..nextFrame)
+                    {
+                        val temp = increment * (frameIndex - curFrame)
+                        val newVal: PointF = curValue.plus(temp)
+                        shiftedPlaybackFrames[frameIndex] = newVal as T
+                    }
+                }
+                else -> // arrayList
+                {
+                    val curValue = curKeyframe.value as ArrayList<PointF>
+                    // here, we have a bunch of points at places
+                    val nextValue = nextKeyframe.value as ArrayList<PointF>
+
+                    // here, those are at different places
+                    // between these two locations, each point has a difference and an increment
+
+                    val diffValue: ArrayList<PointF> = nextValue - curValue
+                    val increment = diffValue / diffFrame
+
+                    for (frameIndex in curFrame..nextFrame)
+                    {
+                        // each point should get its increment, go to the array
+                        // the array should then go to the playback frames
+                        val newVal: ArrayList<PointF> =
+                                curValue + (increment * (frameIndex - curFrame))
+                        shiftedPlaybackFrames[frameIndex] = newVal as T
+
+                    }
                 }
             }
         }
@@ -170,9 +193,9 @@ class Channel<T>(var name: ChannelName, var type: T)
         for (i in 0..length)
         {
             // we add type instead of adding float, color and array separately
-                playbackFrames?.let {
-                    it.add(type)
-                }
+            playbackFrames?.let {
+                it.add(type)
+            }
 
         }
 
@@ -199,12 +222,21 @@ class Channel<T>(var name: ChannelName, var type: T)
                     }
             }
         }
+
+        if (type is PointF)
+        {
+            playbackFrames?.let {
+                for (i in 0 until it.count())
+                    Log.d("Tag",
+                          "At $i -> ${it[i]}")
+            }
+        }
     }
 
     fun scaleChannelFromRight(ratio: Float, length: Int)
     {
         // left corner is pivot
-        var utmostLeftFrame = 100_000
+        var utmostLeftFrame = MaxPositive
 
         if (keyframes.count() < 2)
             return
@@ -216,7 +248,9 @@ class Channel<T>(var name: ChannelName, var type: T)
                 utmostLeftFrame = keyframe.frame
         }
 
-        scaleKeyframesFromRightBy (ratio, length, utmostLeftFrame)
+        scaleKeyframesFromRightBy(ratio,
+                                  length,
+                                  utmostLeftFrame)
     }
 
     fun scaleKeyframesFromRightBy(ratio: Float, length: Int, leftFrame: Int)
@@ -242,7 +276,7 @@ class Channel<T>(var name: ChannelName, var type: T)
     fun scaleChannelFromLeft(ratio: Float, length: Int)
     {
         // right corner is pivot
-        var utmostRightFrame = -100_000
+        var utmostRightFrame = MinNegative
 
         if (keyframes.count() < 2)
             return
@@ -258,7 +292,8 @@ class Channel<T>(var name: ChannelName, var type: T)
                                  length,
                                  utmostRightFrame)
     }
-    fun scaleKeyframesFromLeftBy (ratio: Float, length: Int, rightFrame: Int)
+
+    fun scaleKeyframesFromLeftBy(ratio: Float, length: Int, rightFrame: Int)
     {
         var temp: ArrayList<Keyframe<T>> = arrayListOf()
 
@@ -275,14 +310,14 @@ class Channel<T>(var name: ChannelName, var type: T)
         }
 
         keyframes = temp
-       // makePlaybackFrames(length)
+        // makePlaybackFrames(length)
     }
 
     fun scaleFromBothLeftAndRight(ratio: Float, length: Int)
     {
         // middle is pivot
-        var utmostRightFrame = -100_000
-        var utmostLeftFrame = 100_000
+        var utmostRightFrame = MinNegative
+        var utmostLeftFrame = MaxPositive
 
         if (keyframes.count() < 2)
             return
@@ -298,7 +333,6 @@ class Channel<T>(var name: ChannelName, var type: T)
             if (keyframe.frame < utmostLeftFrame)
                 utmostLeftFrame = keyframe.frame
         }
-
 
 
         // 20 , 50
@@ -330,78 +364,108 @@ class Channel<T>(var name: ChannelName, var type: T)
         // makePlaybackFrames(length)
     }
 
+
     fun merge(other: Channel<T>)
     {
-        if (type is Float)
+        when (type)
         {
-            for (keyframe in other.keyframes)
+            is Float ->
             {
-                var value = keyframe.value as Float
-                var frame = keyframe.frame
-                for (i in 0 until this.keyframes.count())
+                for (keyframe in other.keyframes)
                 {
-                    if (this.keyframes[i].frame == frame)
+                    var value = keyframe.value as Float
+                    var frame = keyframe.frame
+                    for (i in 0 until this.keyframes.count())
                     {
-                        // if it exists, average the value and remove
-                        value = (value + this.keyframes[i].value as Float) / 2
-                        this.keyframes.removeAt(i)
-                        break
+                        if (this.keyframes[i].frame == frame)
+                        {
+                            // if it exists, average the value and remove
+                            value = (value + this.keyframes[i].value as Float) / 2
+                            this.keyframes.removeAt(i)
+                            break
+                        }
                     }
-                }
 
-                val adjustedKeyframe = Keyframe<Float>(frame, value)
-                this.keyframes.add(adjustedKeyframe as Keyframe<T>)
+                    val adjustedKeyframe =
+                            Keyframe<Float>(frame,
+                                            value)
+                    this.keyframes.add(adjustedKeyframe as Keyframe<T>)
+                }
+            }
+            is Color ->
+            {
+                for (keyframe in other.keyframes)
+                {
+                    var value = keyframe.value as Color
+                    var frame = keyframe.frame
+                    for (i in 0 until this.keyframes.count())
+                    {
+                        if (this.keyframes[i].frame == frame)
+                        {
+                            // if it exists, average the value and remove
+                            value = ((MyColor(value) + MyColor(this.keyframes[i].value as Color)) / 2).color()
+
+                            this.keyframes.removeAt(i)
+                            break
+                        }
+                    }
+
+                    val adjustedKeyframe =
+                            Keyframe<Color>(frame,
+                                            value)
+                    this.keyframes.add(adjustedKeyframe as Keyframe<T>)
+                }
+            }
+            is PointF ->
+            {
+                for (keyframe in other.keyframes)
+                {
+                    var value = keyframe.value as PointF
+                    var frame = keyframe.frame
+                    for (i in 0 until this.keyframes.count())
+                    {
+                        if (this.keyframes[i].frame == frame)
+                        {
+                            // if it exists, average the value and remove
+                            value = (value + this.keyframes[i].value as PointF) / 2
+
+                            this.keyframes.removeAt(i)
+                            break
+                        }
+                    }
+
+                    val adjustedKeyframe =
+                            Keyframe<PointF>(frame,
+                                             value)
+                    this.keyframes.add(adjustedKeyframe as Keyframe<T>)
+                }
+            }
+            else -> // array list
+            {
+                for (keyframe in other.keyframes)
+                {
+                    var value = keyframe.value as ArrayList<PointF>
+                    var frame = keyframe.frame
+                    for (i in 0 until this.keyframes.count())
+                    {
+                        if (this.keyframes[i].frame == frame)
+                        {
+                            // if it exists, average the value and remove
+                            value = ( value + this.keyframes[i].value as ArrayList<PointF> ) / 2
+
+                            this.keyframes.removeAt(i)
+                            break
+                        }
+                    }
+
+                    val adjustedKeyframe =
+                            Keyframe<ArrayList<PointF>>(frame,
+                                                        value)
+                    this.keyframes.add(adjustedKeyframe as Keyframe<T>)
+                }
             }
         }
-        else if (type is Color)
-        {
-            for (keyframe in other.keyframes)
-            {
-                var value = keyframe.value as Color
-                var frame = keyframe.frame
-                for (i in 0 until this.keyframes.count())
-                {
-                    if (this.keyframes[i].frame == frame)
-                    {
-                        // if it exists, average the value and remove
-                        value = (MyColor(value) + MyColor(this.keyframes[i].value as Color)).color()
-
-                        this.keyframes.removeAt(i)
-                        break
-                    }
-                }
-
-                val adjustedKeyframe =
-                        Keyframe<Color>(frame,
-                                        value)
-                this.keyframes.add(adjustedKeyframe as Keyframe<T>)
-            }
-        }
-        else // array list
-        {
-            for (keyframe in other.keyframes)
-            {
-                var value = keyframe.value as ArrayList<PointF>
-                var frame = keyframe.frame
-                for (i in 0 until this.keyframes.count())
-                {
-                    if (this.keyframes[i].frame == frame)
-                    {
-                        // if it exists, average the value and remove
-                            value = value + this.keyframes[i].value as ArrayList<PointF>
-
-                        this.keyframes.removeAt(i)
-                        break
-                    }
-                }
-
-                val adjustedKeyframe =
-                        Keyframe<ArrayList<PointF>>(frame,
-                                        value)
-                this.keyframes.add(adjustedKeyframe as Keyframe<T>)
-            }
-        }
-
         this.sortKeyframes()
+
     }
 }

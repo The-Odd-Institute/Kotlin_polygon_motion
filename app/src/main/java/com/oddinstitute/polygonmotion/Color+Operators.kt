@@ -1,6 +1,8 @@
 package com.oddinstitute.polygonmotion
 
 import android.graphics.Color
+import android.graphics.Point
+import android.graphics.PointF
 
 
 operator fun Color.plus(other: Color): Color = Color.valueOf(this.red() + other.red(),

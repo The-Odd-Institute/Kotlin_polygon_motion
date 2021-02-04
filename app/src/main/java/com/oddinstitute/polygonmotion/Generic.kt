@@ -6,31 +6,30 @@ import android.graphics.Point
 import android.graphics.PointF
 import kotlin.math.roundToInt
 
-var frameRate = 50
+
 var playableMargins = 80
+const val MaxPositive: Int = Int.MAX_VALUE
+const val MinNegative: Int = Int.MIN_VALUE
+
 
 fun Float.toFrames(): Int
 {
-    return (this * frameRate).roundToInt()
+    return (this * Time.frameRate).roundToInt()
 }
 
 fun Int.toSeconds (): Float
 {
-    return (((this.toFloat() / frameRate) * 10).roundToInt()).toFloat() / 10f
+    return (((this.toFloat() / Time.frameRate) * 10).roundToInt()).toFloat() / 10f
 }
-
-
-fun Int.toFloatColor (): Float
-{
-    return (this.toFloat() / 255)
-}
-
-
-fun Boolean.toInt() = if (this) 1 else 0
-
-
-
-
+//
+//
+//fun Int.toFloatColor (): Float
+//{
+//    return (this.toFloat() / 255)
+//}
+//
+//
+//fun Boolean.toInt() = if (this) 1 else 0
 
 
 fun Path.moveToPoint(point: PointF)
@@ -44,8 +43,3 @@ fun Path.lineToPoint(point: PointF)
     this.lineTo(point.x,
                 point.y)
 }
-
-
-//
-//
-//

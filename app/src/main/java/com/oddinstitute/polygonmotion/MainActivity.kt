@@ -2,7 +2,6 @@ package com.oddinstitute.polygonmotion
 
 import android.os.Bundle
 import android.view.View
-import android.widget.SeekBar
 import androidx.appcompat.app.AppCompatActivity
 import kotlinx.android.synthetic.main.activity_main.*
 
@@ -11,41 +10,44 @@ class MainActivity : AppCompatActivity()
     lateinit var squarePolygon: Polygon
     lateinit var trianglePolygon: Polygon
 
-    val duration: Float = 2f
 
-    var currentFrame = 55
     lateinit var drawView: DrawView
 
-    var currentTime = 0f
-    val artwork = Artwork()
+    val artwork_1 = Artwork()
 
     override fun onCreate(savedInstanceState: Bundle?)
     {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-
-        currentTime = currentFrame.toSeconds()
+        Time.currentTime = Time.currentFrame.toSeconds()
         setupSeekBar()
 
         timeSeekbar.setOnSeekBarChangeListener(seekBarListener())
 
-       squarePolygon = AppData.square()
-        artwork.polygons.add(squarePolygon)
-        temp_addSquare_1_Motions()
-        temp_addSquareMixedMotion()
-        temp_addSquare_2_Motions()
+
+        // TODO: These have to be at the polygon level
+        // a function that reads data and applies the motion to poly such as
+        // myPolygon.addMotion(x)
+        // This Square
+        squarePolygon = AppData.square()
+//        AppData.temp_addSquareShapeMotion_1(squarePolygon)
+//        AppData.temp_addSquare_1_Motions(squarePolygon)
+//        AppData.temp_addSquareMixedMotion(squarePolygon)
+//        AppData.temp_addSquare_2_Motions(squarePolygon)
+        artwork_1.polygons.add(squarePolygon)
 
 
-// this Triangle
+        // This Triangle
         trianglePolygon = AppData.triangle()
-        artwork.polygons.add(trianglePolygon)
-        temp_addTriangleShapeMotion()
+//        AppData.temp_addTriangleShapeMotion(trianglePolygon)
+        artwork_1.polygons.add(trianglePolygon)
 
 
 
+        AppData.temp_addArtworkMotion_1(artwork_1)
         drawView = DrawView(this,
-                            arrayListOf(artwork))
+                            arrayListOf(artwork_1))
 
         boom.addView(drawView)
 
@@ -75,9 +77,9 @@ class MainActivity : AppCompatActivity()
 
 //                    motion.scaleMotionFromBothLeftAndRight(motionScale, duration.toFrames())
 
-                    motion.scaleMotionFromLeft(motionScale, duration.toFrames())
+                    motion.scaleMotionFromLeft(motionScale, Time.duration.toFrames())
 
-                    squarePolygon.aggregateMotions(duration.toFrames())
+                    squarePolygon.aggregateMotions(Time.duration.toFrames())
 
                     // this is to refresh all after a change in motion
                     playbackAll()

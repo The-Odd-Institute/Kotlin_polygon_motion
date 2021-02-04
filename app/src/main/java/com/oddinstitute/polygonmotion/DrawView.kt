@@ -28,49 +28,48 @@ class DrawView : View
 
 
 
-    fun makePathFor(polygon: Polygon): Path
-    {
-        // Here, draw the MAIN Path
-        var path = Path()
-        path.fillType = Path.FillType.EVEN_ODD
-
-        path.moveToPoint(polygon.pathData[0])
-
-        for (i in 0 until polygon.pathData.count())
-        {
-            path.lineToPoint(polygon.pathData[i])
-        }
-
-
-
-        path.close()
-
-        return path
-    }
+//    fun makePathFor(polygon: Polygon): Path
+//    {
+//        // Here, draw the MAIN Path
+//        var path = Path()
+//        path.fillType = Path.FillType.EVEN_ODD
+//
+//        path.moveToPoint(polygon.pathData[0])
+//
+//        for (i in 0 until polygon.pathData.count())
+//        {
+//            path.lineToPoint(polygon.pathData[i])
+//        }
+//
+//        path.close()
+//
+//        return path
+//    }
 
 
     fun makePaths()
     {
         for (artwork in artworks)
         {
-            artwork.clearPaths()
+            artwork.makeAllPaths()
+//            artwork.clearPaths()
         }
+
 
         // Make All Main Paths
-        for (j in 0 until artworks.count())
-        {
-            val artwork = artworks[j]
-
-            for (i in 0 until artwork.polygons.count())
-            {
-                val polygon = artwork.polygons[i]
-                val path = makePathFor(polygon)
-                polygon.path = path
-                artwork.polygons[i] = polygon
-            }
-            artworks[j] = artwork
-        }
-
+//        for (j in 0 until artworks.count())
+//        {
+//            val artwork = artworks[j]
+//
+//            for (i in 0 until artwork.polygons.count())
+//            {
+//                val polygon = artwork.polygons[i]
+//                val path = makePathFor(polygon)
+//                polygon.path = path
+//                artwork.polygons[i] = polygon
+//            }
+//            artworks[j] = artwork
+//        }
     }
 
     fun drawArtworks(canvas: Canvas)
@@ -101,7 +100,6 @@ class DrawView : View
 
         // drawing all paths
         drawArtworks(canvas)
-
     }
 
 

@@ -4,13 +4,15 @@ package com.oddinstitute.polygonmotion
 enum class ChannelName(val type: String)
 {
     // Group Level Only
-    TranslateX("Move Horizontally"),
-    TranslateY("Move Vertically"),
+    Translate("Move"),
+//    TranslateX("Move Horizontally"),
+//    TranslateY("Move Vertically"),
 
     Rotate("Rotate"),
 
-    ScaleX("Resize Horizontally"),
-    ScaleY("Resize Vertically"),
+    Scale("Resize"),
+//    ScaleX("Resize Horizontally"),
+//    ScaleY("Resize Vertically"),
 
     Alpha("Visibility"),
 

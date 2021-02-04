@@ -5,8 +5,8 @@ import kotlinx.android.synthetic.main.activity_main.*
 
 fun MainActivity.setupSeekBar()
 {
-    timeSeekbar.max = duration.toFrames()
-    timeSeekbar.progress = currentFrame
+    timeSeekbar.max = Time.duration.toFrames()
+    timeSeekbar.progress = Time.currentFrame
 }
 
 fun MainActivity.seekBarListener(): SeekBar.OnSeekBarChangeListener
@@ -17,7 +17,7 @@ fun MainActivity.seekBarListener(): SeekBar.OnSeekBarChangeListener
                                        progress: Int,
                                        b: Boolean)
         {
-            currentFrame = progress
+            Time.currentFrame = progress
             playbackAll()
         }
 
