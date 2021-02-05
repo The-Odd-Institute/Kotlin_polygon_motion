@@ -54,7 +54,7 @@ class Channel<T>(var name: ChannelName, var type: T)
     {
         // this entire method has to be reviewed
         // it currently doesn't account for matters such as ease in ease out
-        playbackFrames?.let { it.clear() }
+        playbackFrames?.clear()
 
 
         // very important, we should only allocate the playbackFrames
@@ -223,14 +223,14 @@ class Channel<T>(var name: ChannelName, var type: T)
             }
         }
 
-        if (type is PointF)
-        {
-            playbackFrames?.let {
-                for (i in 0 until it.count())
-                    Log.d("Tag",
-                          "At $i -> ${it[i]}")
-            }
-        }
+//        if (type is PointF)
+//        {
+//            playbackFrames?.let {
+//                for (i in 0 until it.count())
+//                    Log.d("Tag",
+//                          "At $i -> ${it[i]}")
+//            }
+//        }
     }
 
     fun scaleChannelFromRight(ratio: Float, length: Int)

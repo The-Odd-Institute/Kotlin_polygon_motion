@@ -5,9 +5,6 @@ import android.graphics.Paint
 import android.graphics.Path
 import android.graphics.PointF
 
-
-
-
 class AppData
 {
     companion object Stuff

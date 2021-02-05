@@ -4,184 +4,104 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#FFFFFF"
+    android:background="#999999"
     tools:context=".MainActivity">
 
-    <RelativeLayout
+    <com.oddinstitute.polygonmotion.WideRelativeLayout
         android:id="@+id/boom"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_marginStart="50dp"
-        android:layout_marginTop="50dp"
-        android:layout_marginEnd="50dp"
-        android:layout_marginBottom="250dp"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="10dp"
         android:background="#DADADA"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/constraintLayout"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
-        <!--        <View-->
-        <!--            android:id="@+id/redView"-->
-        <!--            android:layout_width="120dp"-->
-        <!--            android:layout_height="120dp"-->
+        <com.oddinstitute.polygonmotion.WideRelativeLayout
+            android:id="@+id/transformBoom"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="#FFFFFF">
 
-        <!--            android:layout_alignParentTop="true"-->
-        <!--            android:layout_marginLeft="100dp"-->
-        <!--            android:layout_marginTop="100dp"-->
-        <!--            android:background="@android:color/holo_red_dark" />-->
-    </RelativeLayout>
-
-    <SeekBar
-        android:id="@+id/timeSeekbar"
-        android:layout_width="0dp"
-        android:layout_height="44dp"
-        android:layout_marginStart="50dp"
-        android:layout_marginTop="20dp"
-        app:layout_constraintEnd_toEndOf="@+id/boom"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/boom" />
+        </com.oddinstitute.polygonmotion.WideRelativeLayout>
+    </com.oddinstitute.polygonmotion.WideRelativeLayout>
 
     <TextView
         android:id="@+id/timeTextView"
-        android:layout_width="64dp"
+        android:layout_width="0dp"
         android:layout_height="64dp"
-        android:layout_marginEnd="50dp"
+        android:layout_marginStart="10dp"
+        android:layout_marginEnd="10dp"
         android:background="#673AB7"
         android:gravity="center"
         android:text='32.5"'
         android:textColor="#FFFFFF"
         android:textSize="24sp"
+        app:layout_constraintBottom_toBottomOf="@+id/boom"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/relativeLayout2" />
+        app:layout_constraintStart_toEndOf="@+id/boom" />
 
-    <RelativeLayout
 
-        android:id="@+id/relativeLayout2"
-        android:layout_width="0dp"
-        android:layout_height="64dp"
-        android:layout_marginEnd="16dp"
-        android:background="#D6D6D6"
-        android:orientation="horizontal"
-        app:layout_constraintEnd_toStartOf="@+id/timeTextView"
-        app:layout_constraintStart_toStartOf="@+id/textView5"
-        app:layout_constraintTop_toBottomOf="@+id/textView5">
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/constraintLayout"
+        android:layout_width="match_parent"
+        android:layout_height="264dp"
+        android:background="#FFFCE2"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
+
+        <SeekBar
+            android:id="@+id/timeSeekbar"
+            android:layout_width="0dp"
+            android:layout_height="44dp"
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginEnd="10dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
         <RelativeLayout
-            android:id="@+id/playableTimeline"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="#7A7A7A">
 
-            <View
-                android:id="@+id/timeTick"
-                android:layout_width="1dp"
+            android:id="@+id/relativeLayout2"
+            android:layout_width="match_parent"
+            android:layout_height="64dp"
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginEnd="10dp"
+            android:background="#D6D6D6"
+            android:orientation="horizontal"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/timeSeekbar">
+
+            <RelativeLayout
+                android:id="@+id/playableTimeline"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="#7A7A7A">
+
+                <View
+                    android:id="@+id/timeTick"
+                    android:layout_width="1dp"
+                    android:layout_height="match_parent"
+                    android:background="#000000" />
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/motionsTrackLayout"
+                android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:background="#000000" />
+                android:layout_marginTop="16dp"
+                android:layout_marginBottom="16dp"
+                android:background="#007A7A7A" />
+
+
         </RelativeLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
-        <RelativeLayout
-            android:id="@+id/motionsTrackLayout"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_marginTop="16dp"
-            android:layout_marginBottom="16dp"
-            android:background="#007A7A7A" />
-
-
-    </RelativeLayout>
-
-
-    <TextView
-        android:id="@+id/textView5"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:text="Motions"
-        app:layout_constraintStart_toStartOf="@+id/timeSeekbar"
-        app:layout_constraintTop_toBottomOf="@+id/timeSeekbar" />
-
-    <Button
-        android:id="@+id/offsetButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
-        android:text="Offset"
-        app:layout_constraintStart_toStartOf="@+id/relativeLayout2"
-        app:layout_constraintTop_toBottomOf="@+id/relativeLayout2" />
-
-    <EditText
-        android:id="@+id/channelOffsetEditText"
-        android:layout_width="128dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="20dp"
-        android:text="0"
-        android:ems="10"
-        app:layout_constraintStart_toEndOf="@+id/offsetButton"
-        app:layout_constraintTop_toTopOf="@+id/offsetButton" />
-
-    <EditText
-        android:id="@+id/motionOffsetEditText"
-        android:layout_width="128dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="20dp"
-        android:text="0"
-        android:ems="10"
-        app:layout_constraintStart_toEndOf="@+id/channelOffsetEditText"
-        app:layout_constraintTop_toTopOf="@+id/channelOffsetEditText" />
-
-    <EditText
-        android:id="@+id/channelScaleEditText"
-        android:layout_width="128dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="50dp"
-        android:text="2"
-
-        android:ems="10"
-        app:layout_constraintStart_toEndOf="@+id/motionOffsetEditText"
-        app:layout_constraintTop_toTopOf="@+id/motionOffsetEditText" />
-
-    <TextView
-        android:id="@+id/textView"
-        android:layout_width="wrap_content"
-        android:layout_height="16dp"
-        android:text="Channel Offset"
-        app:layout_constraintBottom_toTopOf="@+id/channelOffsetEditText"
-        app:layout_constraintStart_toStartOf="@+id/channelOffsetEditText" />
-
-    <TextView
-        android:id="@+id/textView2"
-        android:layout_width="wrap_content"
-        android:layout_height="16dp"
-        android:text="Motion Offset"
-        app:layout_constraintBottom_toTopOf="@+id/motionOffsetEditText"
-        app:layout_constraintStart_toStartOf="@+id/motionOffsetEditText" />
-
-    <TextView
-        android:id="@+id/textView3"
-        android:layout_width="wrap_content"
-        android:layout_height="16dp"
-        android:text="Channel Scale"
-        app:layout_constraintBottom_toTopOf="@+id/channelScaleEditText"
-        app:layout_constraintStart_toStartOf="@+id/channelScaleEditText" />
-
-    <EditText
-        android:id="@+id/motionScaleEditText"
-        android:layout_width="128dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="20dp"
-        android:text="3"
-
-        android:ems="10"
-        app:layout_constraintStart_toEndOf="@+id/channelScaleEditText"
-        app:layout_constraintTop_toTopOf="@+id/channelScaleEditText" />
-
-    <TextView
-        android:id="@+id/textView4"
-        android:layout_width="wrap_content"
-        android:layout_height="16dp"
-        android:text="Motion Scale"
-        app:layout_constraintBottom_toTopOf="@+id/motionScaleEditText"
-        app:layout_constraintStart_toStartOf="@+id/motionScaleEditText" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

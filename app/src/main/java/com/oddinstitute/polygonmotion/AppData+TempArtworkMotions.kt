@@ -1,55 +1,34 @@
 package com.oddinstitute.polygonmotion
 
-import android.graphics.Point
 import android.graphics.PointF
-import android.util.Log
 
 
 fun AppData.Stuff.temp_addArtworkMotion_1(artwork: Artwork)
 {
-    // TranslateX("Move Horizontally")
-    val artworkMotionRight = Motion(java.util.UUID.randomUUID().toString())
-    val keyframeX_0 = Keyframe<PointF>(10, PointF (artwork.origin.x, artwork.origin.y))
-    val keyframeX_2 = Keyframe<PointF>(70, PointF(1900f, artwork.origin.y))
-    artworkMotionRight.translate.addKeyframes(listOf(keyframeX_0, keyframeX_2))
-    artwork.addMotion(artworkMotionRight, Time.duration.toFrames())
-
-    val artworkMotionUp = Motion(java.util.UUID.randomUUID().toString())
-    val keyframeX_3 = Keyframe<PointF>(25, PointF (artwork.origin.x, artwork.origin.y))
-    val keyframeX_5 = Keyframe<PointF>(90, PointF(artwork.origin.x, 350f))
-    artworkMotionUp.translate.addKeyframes(listOf(keyframeX_3, keyframeX_5))
-    artwork.addMotion(artworkMotionUp, Time.duration.toFrames())
-
-    /**
-     * When adding new motions, the keyframes shouldn't merge.
-     * for instance a trnalstaeX keyframe
-     */
-
-
-//    artwork.aggregatedMotion?.let { aggMotion ->
-//        aggMotion.translate.playbackFrames?.let {
-//            for (any in it)
-//            {
-//                Log.d("Tag",
-//                      "PB is: $any")
-//            }
-//        }
-//    }
-
-
+    // Translate("Move")
+    val artworkMotion = Motion(java.util.UUID.randomUUID().toString())
+    val keyframeX_3 = Keyframe<PointF>(25, PointF (artwork.origin.x + 400f, artwork.origin.y))
+    val keyframeX_5 = Keyframe<PointF>(90, PointF(artwork.origin.x + 800f, 350f))
+    artworkMotion.translate.addKeyframes(listOf(keyframeX_3, keyframeX_5))
 
 
     // Rotate("Rotate")
+    val keyframeX_6 = Keyframe<Float>(25, 0f)
+    val keyframeX_7 = Keyframe<Float>(90, 360f)
+    artworkMotion.rotate.addKeyframes(listOf(keyframeX_6, keyframeX_7))
 
 
-
-    // ScaleX("Resize Horizontally")
-
-
-
-    // ScaleY("Resize Vertically")
-
+    // Scale("Resize")
+    val keyframeX_8 = Keyframe<PointF>(25, PointF (1f, 1f))
+    val keyframeX_9 = Keyframe<PointF>(90, PointF(2.5f, 1.5f))
+    artworkMotion.scale.addKeyframes(listOf(keyframeX_8, keyframeX_9))
 
 
     // Alpha("Visibility")
+    val keyframeX_10 = Keyframe<Float>(25, 1f)
+    val keyframeX_11 = Keyframe<Float>(90, .1f)
+    artworkMotion.alpha.addKeyframes(listOf(keyframeX_10, keyframeX_11))
+
+
+    artwork.replaceMotion(artworkMotion, Time.duration())
 }

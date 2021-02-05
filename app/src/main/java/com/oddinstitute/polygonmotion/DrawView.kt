@@ -13,7 +13,6 @@ class DrawView : View
 
     var mainPaint: Paint = Paint()
 
-
     @SuppressLint("ClickableViewAccessibility")
     constructor(context: Context?,
                 artworks: ArrayList<Artwork>) : super(context)
@@ -108,7 +107,23 @@ class DrawView : View
         // stroke
         mainPaint.style = Paint.Style.STROKE
         mainPaint.strokeWidth = polygon.strokeWidth
-        mainPaint.color = polygon.strokeColor
+
+        // Fill color didn't have keyframes, neither did the parent
+        if (polygon.strokeColorWorking == MinNegative)
+        {
+            // you shouldn't make this two equal. We have to copy one by one
+
+            val r = Color.valueOf(polygon.strokeColor).red()
+            val g = Color.valueOf(polygon.strokeColor).green()
+            val b = Color.valueOf(polygon.strokeColor).blue()
+            val a = Color.valueOf(polygon.strokeColor).alpha()
+
+            polygon.strokeColorWorking = Color.valueOf(r, g, b, a).toArgb()
+
+        }
+
+
+        mainPaint.color = polygon.strokeColorWorking
         mainPaint.strokeCap = polygon.strokeLineCap
     }
 
@@ -117,7 +132,22 @@ class DrawView : View
     {
         // fill
         mainPaint.style = Paint.Style.FILL
-        mainPaint.color = polygon.fillColor
+
+        // Fill color didn't have keyframes, neither did the parent
+        if (polygon.fillColorWorking == MinNegative)
+        {
+            // you shouldn't make this two equal. We have to copy one by one
+
+            val r = Color.valueOf(polygon.fillColor).red()
+            val g = Color.valueOf(polygon.fillColor).green()
+            val b = Color.valueOf(polygon.fillColor).blue()
+            val a = Color.valueOf(polygon.fillColor).alpha()
+
+            polygon.fillColorWorking = Color.valueOf(r, g, b, a).toArgb()
+
+        }
+
+        mainPaint.color = polygon.fillColorWorking
     }
 }
 
