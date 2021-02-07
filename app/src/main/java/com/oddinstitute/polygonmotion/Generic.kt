@@ -7,6 +7,8 @@ import kotlin.math.roundToInt
 
 var playableMargins = 80
 val DefaultScreenSize : Point = Point(1920, 1080)
+var boomCenter: PointF = PointF()
+var boomsSize: PointF = PointF()
 
 
 

@@ -1,14 +1,19 @@
 package com.oddinstitute.polygonmotion
 
+import android.annotation.SuppressLint
+import android.graphics.PointF
 import android.os.Bundle
 import android.util.Log
-import android.view.MotionEvent
-import android.view.ScaleGestureDetector
-import android.view.View
+import android.view.*
+import android.widget.FrameLayout
+import android.widget.RelativeLayout
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.constraintlayout.widget.ConstraintLayout
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlin.math.max
 import kotlin.math.min
+import kotlin.math.roundToInt
 
 class MainActivity : AppCompatActivity()
 {
@@ -20,6 +25,11 @@ class MainActivity : AppCompatActivity()
 
     lateinit var artwork_1: Artwork
     private var mScaleGestureDetector: ScaleGestureDetector? = null
+
+    private var xDelta = 0
+    private var xAtTouchDown = 0
+    private var yAtTouchDown = 0
+    private var yDelta = 0
 
 
     override fun onWindowFocusChanged(hasFocus: Boolean)
@@ -67,12 +77,27 @@ class MainActivity : AppCompatActivity()
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        boom.viewTreeObserver.addOnGlobalLayoutListener(viewTreeListener())
 
 
 
-        mScaleGestureDetector = ScaleGestureDetector(this,
-                                                     ScaleListener(transformBoom))
 
+        // scale boom
+//        mScaleGestureDetector = ScaleGestureDetector(this,
+//                ScaleListener(transformBoom))
+
+        // translate boom
+        transformBoom.setOnTouchListener(onTouchListener())
+
+
+//        rootView.viewTreeObserver.addOnGlobalLayoutListener(object : ViewTreeObserver.OnGlobalLayoutListener {
+//
+//            override fun onGlobalLayout() {
+//                rootView.viewTreeObserver.removeOnGlobalLayoutListener(this)
+//
+//
+//            }
+//        })
 
 
         setupSeekBar()
@@ -91,7 +116,7 @@ class MainActivity : AppCompatActivity()
 
     override fun onTouchEvent(motionEvent: MotionEvent): Boolean
     {
-        mScaleGestureDetector!!.onTouchEvent(motionEvent)
+//        mScaleGestureDetector!!.onTouchEvent(motionEvent)
         return true
     }
 
@@ -124,6 +149,90 @@ class MainActivity : AppCompatActivity()
 
 
             return true
+        }
+    }
+
+    @SuppressLint("ClickableViewAccessibility")
+    private fun onTouchListener(): View.OnTouchListener?
+    {
+        return View.OnTouchListener { view, event ->
+            val x = event.rawX.toInt()
+            val y = event.rawY.toInt()
+
+            when (event.action and MotionEvent.ACTION_MASK)
+            {
+                MotionEvent.ACTION_DOWN ->
+                {
+                    val lParams = view.layoutParams as FrameLayout.LayoutParams
+                    xDelta = x - lParams.leftMargin
+                    yDelta = y - lParams.topMargin
+
+                    xAtTouchDown = event.rawX.toInt()
+                    yAtTouchDown = event.rawY.toInt()
+                }
+                MotionEvent.ACTION_UP   -> Toast.makeText(this@MainActivity,
+                        "I'm here!",
+                        Toast.LENGTH_SHORT)
+                        .show()
+                MotionEvent.ACTION_MOVE ->
+                {
+                    val layoutParams = view
+                            .layoutParams as FrameLayout.LayoutParams
+                    layoutParams.leftMargin = x - xDelta
+                    layoutParams.topMargin = y - yDelta
+                    layoutParams.rightMargin = 0
+                    layoutParams.bottomMargin = 0
+                    view.layoutParams = layoutParams
+
+
+                    xAtTouchDown = event.rawX.toInt() - xAtTouchDown
+                    yAtTouchDown = event.rawY.toInt() - yAtTouchDown
+
+                    for (artwork in drawView.artworks)
+                    {
+                        artwork.boomOffset = PointF(xAtTouchDown.toFloat(), yAtTouchDown.toFloat())
+                    }
+
+
+                    Log.d("Tag", "$xAtTouchDown $yAtTouchDown")
+//                    Log.d("Tag", "x is $xAtTouchDown, y is: $yAtTouchDown")
+
+                }
+            }
+
+            playbackAll()
+            true
+        }
+
+    }
+
+
+    fun viewTreeListener () : ViewTreeObserver.OnGlobalLayoutListener
+    {
+        return object : ViewTreeObserver.OnGlobalLayoutListener
+        {
+            override fun onGlobalLayout()
+            {
+                boom.viewTreeObserver
+                        .removeOnGlobalLayoutListener(this)
+
+                val w = boom.width
+                val h = boom.height
+
+                boomCenter = PointF((w/2).toFloat(), (h/2).toFloat() )
+
+                boomsSize = PointF(w.toFloat(), h.toFloat())
+
+                val myParams = boom.layoutParams
+
+                myParams.width = boom.width.toInt()
+                myParams.height = boom.height.toInt()
+//
+                val lp = FrameLayout.LayoutParams(myParams.width,
+                        myParams.height)
+                transformBoom.layoutParams = lp
+
+            }
         }
     }
 }

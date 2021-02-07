@@ -11,6 +11,7 @@ class Artwork ()
     var pivot: PointF = PointF(0f,0f)
 
     var boomScaleFactor: Float = 1f
+    var boomOffset: PointF = PointF()
 
     // this is the default size of the screen where the artwork was built or animated
     var screenSize: PointF = PointF (1920f, 1080f)

@@ -5,6 +5,13 @@ import android.graphics.Paint
 import android.graphics.Path
 import android.graphics.PointF
 
+// TODO App Data should fetch all the videos from Firebase
+// each video has some artwork
+// artworks have types
+// for each
+
+
+
 class AppData
 {
     companion object Stuff

@@ -2,10 +2,11 @@ package com.oddinstitute.polygonmotion
 
 import android.content.Context
 import android.util.AttributeSet
+import android.widget.FrameLayout
 import android.widget.RelativeLayout
 import kotlin.math.roundToInt
 
-class WideRelativeLayout: RelativeLayout
+class WideFrameLayout: FrameLayout
 {
     constructor(context: Context) : super(context)
 

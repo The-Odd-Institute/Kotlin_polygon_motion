@@ -22,6 +22,83 @@ fun MainActivity.playbackView(view: DrawView)
     }
 }
 
+
+fun MainActivity.playbackPolygon (polygon: Polygon)
+{
+    polygon.motion?.let { motion ->
+
+        motion.fillColor.playbackFrames?.let {
+            polygon.fillColor = it[Time.curFrame].toArgb()
+        }
+
+        motion.strokeColor.playbackFrames?.let {
+            polygon.strokeColor = it[Time.curFrame].toArgb()
+        }
+
+        motion.strokeWidth.playbackFrames?.let {
+            polygon.strokeWidth = it[Time.curFrame]
+        }
+
+        motion.pathData.playbackFrames?.let {
+            polygon.pathData = it[Time.curFrame]
+        }
+    }
+}
+
+
+fun applyArtworkTransformation (artwork: Artwork)
+{
+    // then we play alpha
+    artwork.motion.alpha.playbackFrames?.let {
+        for (polygon in artwork.polygons)   {
+            polygon.transparentBy(it[Time.curFrame])
+        }
+    }
+
+
+    if (artwork.motion.translate.playbackFrames != null)
+    {
+        artwork.motion.translate.playbackFrames?.let {
+
+            artwork.translatePivot(it[Time.curFrame] + artwork.boomOffset)
+
+            for (polygon in artwork.polygons)
+            {
+                polygon.translateBy(it[Time.curFrame]  + artwork.boomOffset)
+            }
+        }
+
+        Log.d("Tag", "point is at ${artwork.polygons[0].pathDataWorking[0]}")
+    }
+    else
+    {
+        // we translate by zero
+        for (polygon in artwork.polygons)
+        {
+            polygon.translateBy(PointF() + artwork.boomOffset)
+        }
+    }
+
+    // scale
+    artwork.motion.scale.playbackFrames?.let {
+        Log.d("Tag", "scaling, pivot is: ${artwork.pivotWorking}")
+
+        for (polygon in artwork.polygons)
+        {
+            polygon.scaleBy(it[Time.curFrame], artwork.pivotWorking)
+        }
+    }
+
+    // rotate
+    artwork.motion.rotate.playbackFrames?.let {
+
+        for (polygon in artwork.polygons)
+        {
+            polygon.rotateBy(it[Time.curFrame], artwork.pivotWorking)
+        }
+    }
+}
+
 fun MainActivity.playbackArtwork(artwork: Artwork)
 {
     // when you want to playback an artwork
@@ -33,24 +110,18 @@ fun MainActivity.playbackArtwork(artwork: Artwork)
         playbackPolygon(polygon)
     }
 
-    // then we play alpha
-    artwork.motion.alpha.playbackFrames?.let {
-        for (polygon in artwork.polygons)   {
-            polygon.transparentBy(it[Time.curFrame])
-        }
-    }
 
-    /** Then, we have a few situations
-     * maybe there is
-     *
-     * only translate
-     * only scale
-     * only rotation
-     * translate and scale
-     * translate, scale, and rotation
-     * translate and rotation
-     * */
+    applyArtworkTransformation (artwork)
 
+
+
+
+
+//    old_way_transform_apply ()
+}
+
+fun old_way_tranform_apply (artwork: Artwork)
+{
     var translateAnimated = false
     var rotationAnimated = false
     var scaleAnimated = false
@@ -76,15 +147,15 @@ fun MainActivity.playbackArtwork(artwork: Artwork)
     }
     else if (!translateAnimated && rotationAnimated && !scaleAnimated) // rotation only
     {
-       // we translate by zero
+        // we translate by zero
         for (polygon in artwork.polygons)   {
             polygon.translateBy(PointF())
         }
 
         // here, we copy the original pivot
-            val x = artwork.pivot.x
-            val y = artwork.pivot.y
-            artwork.pivotWorking = PointF (x, y)
+        val x = artwork.pivot.x
+        val y = artwork.pivot.y
+        artwork.pivotWorking = PointF (x, y)
         // finally, we rotate
         artwork.motion.rotate.playbackFrames?.let {
 
@@ -188,49 +259,5 @@ fun MainActivity.playbackArtwork(artwork: Artwork)
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 }
 
-fun MainActivity.playbackPolygon (polygon: Polygon)
-{
-    polygon.motion?.let { motion ->
-
-        motion.fillColor.playbackFrames?.let {
-            polygon.fillColor = it[Time.curFrame].toArgb()
-        }
-
-        motion.strokeColor.playbackFrames?.let {
-            polygon.strokeColor = it[Time.curFrame].toArgb()
-        }
-
-        motion.strokeWidth.playbackFrames?.let {
-            polygon.strokeWidth = it[Time.curFrame]
-        }
-
-        motion.pathData.playbackFrames?.let {
-            polygon.pathData = it[Time.curFrame]
-        }
-    }
-}
